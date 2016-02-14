@@ -1,12 +1,9 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"os"
-	"os/exec"
-	"strings"
 	"time"
 
 	"github.com/codegangsta/cli"
@@ -30,7 +27,6 @@ type ResultsData struct {
 	Infected bool   `json:"infected"`
 	Result   string `json:"result"`
 	Engine   string `json:"engine"`
-	Known    string `json:"known"`
 	Updated  string `json:"updated"`
 }
 
@@ -48,57 +44,6 @@ func assert(err error) {
 	}
 }
 
-// RunCommand runs cmd on file
-func RunCommand(cmd string, args ...string) string {
-
-	cmdOut, err := exec.Command(cmd, args...).Output()
-	if len(cmdOut) == 0 {
-		assert(err)
-	}
-
-	return string(cmdOut)
-}
-
-// ParsevirustotalOutput convert virustotal output into virustotal struct
-func ParsevirustotalOutput(clamout string) ResultsData {
-
-	virustotal := ResultsData{}
-
-	lines := strings.Split(clamout, "\n")
-	// Extract AV Scan Result
-	result := lines[0]
-	if len(result) != 0 {
-		pathAndResult := strings.Split(result, ":")
-		if strings.Contains(pathAndResult[1], "OK") {
-			virustotal.Infected = false
-		} else {
-			virustotal.Infected = true
-			virustotal.Result = strings.TrimSpace(strings.TrimRight(pathAndResult[1], "FOUND"))
-		}
-	} else {
-		fmt.Println("[ERROR] empty scan result: ", result)
-		os.Exit(2)
-	}
-	// Extract Clam Details from SCAN SUMMARY
-	for _, line := range lines[1:] {
-		if len(line) != 0 {
-			keyvalue := strings.Split(line, ":")
-			if len(keyvalue) != 0 {
-				switch {
-				case strings.Contains(keyvalue[0], "Known viruses"):
-					virustotal.Known = strings.TrimSpace(keyvalue[1])
-				case strings.Contains(line, "Engine version"):
-					virustotal.Engine = strings.TrimSpace(keyvalue[1])
-				}
-			}
-		}
-	}
-
-	virustotal.Updated = BuildTime
-
-	return virustotal
-}
-
 func printStatus(resp gorequest.Response, body string, errs []error) {
 	fmt.Println(resp.Status)
 }
@@ -110,16 +55,18 @@ func printMarkDownTable(virustotal virustotal) {
 		"Infected": virustotal.Results.Infected,
 		"Result":   virustotal.Results.Result,
 		"Engine":   virustotal.Results.Engine,
-		// "Known":    virustotal.Results.Known,
-		"Updated": virustotal.Results.Updated,
+		"Updated":  virustotal.Results.Updated,
 	})
 	table.Markdown = true
 	table.Print()
 }
 
-func updateAV() {
-	fmt.Println("Updating virustotal...")
-	fmt.Println(RunCommand("freshclam"))
+func scanFile(path string) {
+	fmt.Println("Uploading file to virustotal...")
+}
+
+func lookupHash(path string) {
+	fmt.Println("Getting virustotal report...")
 }
 
 var appHelpTemplate = `Usage: {{.Name}} {{if .Flags}}[OPTIONS] {{end}}COMMAND [arg...]
@@ -165,45 +112,29 @@ func main() {
 			Usage:  "proxy settings for Malice webhook endpoint",
 			EnvVar: "MALICE_PROXY",
 		},
+		cli.StringFlag{
+			Name:   "api",
+			Usage:  "VirusTotal API key",
+			EnvVar: "MALICE_VT_API",
+		},
 	}
 	app.Commands = []cli.Command{
 		{
-			Name:    "update",
-			Aliases: []string{"u"},
-			Usage:   "Update virus definitions",
+			Name:    "scan",
+			Aliases: []string{"s"},
+			Usage:   "Upload binary to VirusTotal for scanning",
 			Action: func(c *cli.Context) {
-				updateAV()
+				scanFile(c.Args().First())
 			},
 		},
-	}
-	app.Action = func(c *cli.Context) {
-		path := c.Args().First()
-
-		if _, err := os.Stat(path); os.IsNotExist(err) {
-			assert(err)
-		}
-
-		virustotal := virustotal{
-			Results: ParsevirustotalOutput(RunCommand("/usr/bin/clamscan", "--stdout", path)),
-		}
-
-		if c.Bool("table") {
-			printMarkDownTable(virustotal)
-		} else {
-			fprotJSON, err := json.Marshal(virustotal)
-			assert(err)
-			if c.Bool("post") {
-				request := gorequest.New()
-				if c.Bool("proxy") {
-					request = gorequest.New().Proxy(os.Getenv("MALICE_PROXY"))
-				}
-				request.Post(os.Getenv("MALICE_ENDPOINT")).
-					Set("Task", path).
-					Send(fprotJSON).
-					End(printStatus)
-			}
-			fmt.Println(string(fprotJSON))
-		}
+		{
+			Name:    "lookup",
+			Aliases: []string{"l"},
+			Usage:   "Get file hash scan report",
+			Action: func(c *cli.Context) {
+				lookupHash(c.Args().First())
+			},
+		},
 	}
 
 	err := app.Run(os.Args)
