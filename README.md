@@ -1,4 +1,6 @@
+![VT logo](https://raw.githubusercontent.com/maliceio/malice-virustotal/master/logo.png)
 # malice-virustotal
+
 [![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)
 [![Docker Stars](https://img.shields.io/docker/stars/malice/virustotal.svg)][hub]
 [![Docker Pulls](https://img.shields.io/docker/pulls/malice/virustotal.svg)][hub]
