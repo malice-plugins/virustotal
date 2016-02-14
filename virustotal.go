@@ -25,10 +25,26 @@ type virustotal struct {
 
 // ResultsData json object
 type ResultsData struct {
-	Infected bool   `json:"infected"`
+	Scans        map[string]Scan `json:"scans"`
+	Permalink    string          `json:"permalink"`
+	Resource     string          `json:"resource"`
+	ResponseCode int             `json:"response_code"`
+	Total        int             `json:"total"`
+	Positives    int             `json:"positives"`
+	ScanID       string          `json:"scan_id"`
+	ScanDate     string          `json:"scan_date"`
+	VerboseMsg   string          `json:"verbose_msg"`
+	MD5          string          `json:"md5"`
+	Sha1         string          `json:"sha1"`
+	Sha256       string          `json:"sha256"`
+}
+
+// Scan is a VirusTotal AV scan JSON object
+type Scan struct {
+	Detected bool   `json:"detected"`
+	Version  string `json:"version"`
 	Result   string `json:"result"`
-	Engine   string `json:"engine"`
-	Updated  string `json:"updated"`
+	Update   string `json:"update"`
 }
 
 // ScanResults json object
@@ -75,14 +91,15 @@ func printStatus(resp gorequest.Response, body string, errs []error) {
 	fmt.Println(resp.Status)
 }
 
-func printMarkDownTable(virustotal ScanResults) {
+func printMarkDownTable(virustotal virustotal) {
 	fmt.Println("#### virustotal")
 	table := clitable.New([]string{"Ratio", "Link", "API", "Scanned"})
 	table.AddRow(map[string]interface{}{
-		// "Ratio":   getRatio(virustotal.Positives, virustotal.Total),
-		"Link": fmt.Sprintf("[link](%s)", virustotal.Permalink),
+		"Ratio": getRatio(virustotal.Results.Positives, virustotal.Results.Total),
+		"Link":  fmt.Sprintf("[link](%s)", virustotal.Results.Permalink),
+		"API":   "Public",
 		// "API":     virustotal.ApiType,
-		"Scanned": time.Now(),
+		"Scanned": time.Now().Format("Mon 2006Jan02 15:04:05"),
 	})
 	table.Markdown = true
 	table.Print()
@@ -146,7 +163,7 @@ func scanFile(path string, apikey string) string {
 }
 
 // lookupHash retreieves the virustotal file report for the given hash
-func lookupHash(hash string, apikey string) string {
+func lookupHash(hash string, apikey string) ResultsData {
 	// NOTE: https://godoc.org/github.com/levigross/grequests
 	// fmt.Println("Getting virustotal report...")
 	ro := &grequests.RequestOptions{
@@ -165,14 +182,17 @@ func lookupHash(hash string, apikey string) string {
 	if resp.Ok != true {
 		log.Println("Request did not return OK")
 	}
-
+	var vtResult ResultsData
 	// fmt.Println(resp.String())
-	return resp.String()
+	// return resp.String()
+	resp.JSON(&vtResult)
+	// fmt.Printf("%#v", vtResult)
+	return vtResult
 }
 
 func getRatio(positives int, total int) string {
-	ratio := positives / total
-	return fmt.Sprintf("%d%%", ratio)
+	ratio := 100.0 * float64(positives) / float64(total)
+	return fmt.Sprintf("%.f%%", ratio)
 }
 
 func shortenPermalink(longURL string) string {
@@ -287,11 +307,11 @@ func main() {
 
 				if c.Args().Present() {
 					vtReport := lookupHash(c.Args().First(), apikey)
-					if c.Bool("table") {
-						// printMarkDownTable(vtReport)
-					} else {
-						fmt.Println(vtReport)
-					}
+					// if c.Bool("table") {
+					printMarkDownTable(virustotal{Results: vtReport})
+					// } else {
+					// 	fmt.Println(vtReport)
+					// }
 				} else {
 					log.Fatal(fmt.Errorf("Please supply a MD5/SHA1/SHA256 hash to query."))
 				}
