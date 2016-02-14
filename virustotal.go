@@ -43,6 +43,20 @@ type ScanResults struct {
 	Sha256       string `json:"sha256"`
 }
 
+type bitly struct {
+	StatusCode int       `json:"status_code"`
+	StatusTxt  string    `json:"status_txt"`
+	Data       bitlyData `json:"data"`
+}
+
+type bitlyData struct {
+	LongURL    string `json:"long_url"`
+	URL        string `json:"url"`
+	NewHash    int    `json:"new_hash"`
+	Hash       string `json:"hash"`
+	GlobalHash string `json:"global_hash"`
+}
+
 func getopt(name, dfault string) string {
 	value := os.Getenv(name)
 	if value == "" {
@@ -63,19 +77,19 @@ func printStatus(resp gorequest.Response, body string, errs []error) {
 
 func printMarkDownTable(virustotal virustotal) {
 	fmt.Println("#### virustotal")
-	table := clitable.New([]string{"Infected", "Result", "Engine", "Updated"})
+	table := clitable.New([]string{"Ratio", "Link", "API", "Scanned"})
 	table.AddRow(map[string]interface{}{
-		"Infected": virustotal.Results.Infected,
-		"Result":   virustotal.Results.Result,
-		"Engine":   virustotal.Results.Engine,
-		"Updated":  virustotal.Results.Updated,
+		"Ratio":   virustotal.Results.Infected,
+		"Link":    virustotal.Results.Result,
+		"API":     virustotal.Results.Engine,
+		"Scanned": virustotal.Results.Updated,
 	})
 	table.Markdown = true
 	table.Print()
 }
 
 // scanFile uploads file to virustotal
-func scanFile(path string, apikey string) {
+func scanFile(path string, apikey string) string {
 	// fmt.Println("Uploading file to virustotal...")
 	fd, err := grequests.FileUploadFromDisk(path)
 
@@ -108,7 +122,7 @@ func scanFile(path string, apikey string) {
 	resp.JSON(&scanResults)
 	// fmt.Printf("%#v", scanResults)
 
-	// // TODO: wait for an hour!?!?!? or create a notify URL endpoint?!?!?!
+	// TODO: wait for an hour!?!?!? or create a notify URL endpoint?!?!?!
 	ro := &grequests.RequestOptions{
 		Params: map[string]string{
 			"resource": scanResults.Sha256,
@@ -127,11 +141,13 @@ func scanFile(path string, apikey string) {
 		log.Println("Request did not return OK")
 	}
 
-	fmt.Println(resp.String())
+	// fmt.Println(resp.String())
+	return resp.String()
 }
 
 // lookupHash retreieves the virustotal file report for the given hash
-func lookupHash(hash string, apikey string) {
+func lookupHash(hash string, apikey string) string {
+	// NOTE: https://godoc.org/github.com/levigross/grequests
 	// fmt.Println("Getting virustotal report...")
 	ro := &grequests.RequestOptions{
 		Params: map[string]string{
@@ -146,7 +162,35 @@ func lookupHash(hash string, apikey string) {
 		log.Fatalln("Unable to make request: ", err)
 	}
 
+	if resp.Ok != true {
+		log.Println("Request did not return OK")
+	}
+
+	// fmt.Println(resp.String())
+	return resp.String()
+}
+
+func shortenPermalink(longURL string) string {
+	// NOTE: http://dev.bitly.com/api.html
+	// https://github.com/bitly/go-simplejson
+	var btl bitly
+
+	ro := &grequests.RequestOptions{
+		Params: map[string]string{
+			"access_token": "23382325dd472aed14518ec5b8c8f4c2293e114a",
+			"longUrl":      longURL,
+		},
+	}
+	resp, err := grequests.Get("https://api-ssl.bitly.com/v3/shorten", ro)
+
+	if err != nil {
+		log.Fatalln("Unable to make request: ", err)
+	}
+
 	fmt.Println(resp.String())
+	resp.JSON(&btl)
+
+	return btl.Data.URL
 }
 
 var appHelpTemplate = `Usage: {{.Name}} {{if .Flags}}[OPTIONS] {{end}}COMMAND [arg...]
@@ -237,7 +281,12 @@ func main() {
 				}
 
 				if c.Args().Present() {
-					lookupHash(c.Args().First(), apikey)
+					vtReport := lookupHash(c.Args().First(), apikey)
+					if c.Bool("table") {
+						printMarkDownTable(vtReport)
+					} else {
+						fmt.Println(vtReport)
+					}
 				} else {
 					log.Fatal(fmt.Errorf("Please supply a MD5/SHA1/SHA256 hash to query."))
 				}
