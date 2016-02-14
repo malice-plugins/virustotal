@@ -11,6 +11,8 @@ Malice VirusTotal Plugin
 
 This repository contains a **Dockerfile** of **Malice VirusTotal Plugin** for [Docker](https://www.docker.io/)'s [trusted build](https://index.docker.io/u/malice/virustotal/) published to the public [DockerHub](https://index.docker.io/).
 
+> **WARNING:** Work in progress.  Not ready yet.
+
 ### Dependencies
 
 * [gliderlabs/alpine:3.3](https://index.docker.io/_/gliderlabs/alpine/)
@@ -155,9 +157,9 @@ This will output to stdout and POST to malice results API webhook endpoint.
 ### Sample Output STDOUT (Markdown Table):
 ---
 #### virustotal
-| Ratio    | Link                          | API    | Scanned  |
-| -------- | ----------------------------- | ------ | -------- |
-| 85 %     | [link](http://bit.ly/1ThieJ6) | Public | 20160213 |
+| Ratio   | Link                          | API    | Scanned  |
+| ------- | ----------------------------- | ------ | -------- |
+| 85%     | [link](http://bit.ly/1ThieJ6) | Public | 20160213 |
 ---
 ### To Run on OSX
  - Install [Homebrew](http://brew.sh)
