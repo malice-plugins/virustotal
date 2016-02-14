@@ -157,9 +157,9 @@ This will output to stdout and POST to malice results API webhook endpoint.
 ### Sample Output STDOUT (Markdown Table):
 ---
 #### virustotal
-| Ratio   | Link                          | API    | Scanned  |
-| ------- | ----------------------------- | ------ | -------- |
-| 85%     | [link](http://bit.ly/1ThieJ6) | Public | 20160213 |
+| Ratio   | Link                          | API    | Scanned                |
+| ------- | ----------------------------- | ------ | ---------------------- |
+| 85%     | [link](http://bit.ly/1ThieJ6) | Public | Sun 2016Feb14 14:00:50 |
 ---
 ### To Run on OSX
  - Install [Homebrew](http://brew.sh)
@@ -174,10 +174,6 @@ $ eval $(docker-machine env malice)
 ```
 
 ### Documentation
-#### virustotal
-| Ratio | Link                                                                                                                          | API    | Scanned                                 |
-| ----- | ----------------------------------------------------------------------------------------------------------------------------- | ------ | --------------------------------------- |
-| 0%    | [link](https://www.virustotal.com/file/befb88b89c2eb401900a68e9f5b78764203f2b48264fcc3f7121bf04a57fd408/analysis/1455478776/) | Public | 2016-02-14 13:40:44.042310629 -0700 MST |
 
 ### Issues
 
