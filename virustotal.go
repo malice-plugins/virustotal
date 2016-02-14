@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -249,10 +250,6 @@ func main() {
 	var apikey string
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
-			Name:  "table, t",
-			Usage: "output as Markdown table",
-		},
-		cli.BoolFlag{
 			Name:   "post, p",
 			Usage:  "POST results to Malice webhook",
 			EnvVar: "MALICE_ENDPOINT",
@@ -276,6 +273,12 @@ func main() {
 			Aliases:   []string{"s"},
 			Usage:     "Upload binary to VirusTotal for scanning",
 			ArgsUsage: "FILE to upload to VirusTotal",
+			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name:  "table, t",
+					Usage: "output as Markdown table",
+				},
+			},
 			Action: func(c *cli.Context) {
 				// Check for valid apikey
 				if apikey == "" {
@@ -299,6 +302,12 @@ func main() {
 			Aliases:   []string{"l"},
 			Usage:     "Get file hash scan report",
 			ArgsUsage: "MD5/SHA1/SHA256 hash of file",
+			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name:  "table, t",
+					Usage: "output as Markdown table",
+				},
+			},
 			Action: func(c *cli.Context) {
 				// Check for valid apikey
 				if apikey == "" {
@@ -307,11 +316,14 @@ func main() {
 
 				if c.Args().Present() {
 					vtReport := lookupHash(c.Args().First(), apikey)
-					// if c.Bool("table") {
-					printMarkDownTable(virustotal{Results: vtReport})
-					// } else {
-					// 	fmt.Println(vtReport)
-					// }
+					vt := virustotal{Results: vtReport}
+					if c.Bool("table") {
+						printMarkDownTable(vt)
+					} else {
+						vtJSON, err := json.Marshal(vt)
+						assert(err)
+						fmt.Println(string(vtJSON))
+					}
 				} else {
 					log.Fatal(fmt.Errorf("Please supply a MD5/SHA1/SHA256 hash to query."))
 				}
