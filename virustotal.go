@@ -8,6 +8,7 @@ import (
 
 	"github.com/codegangsta/cli"
 	"github.com/crackcomm/go-clitable"
+	"github.com/levigross/grequests"
 	"github.com/parnurzeal/gorequest"
 )
 
@@ -28,6 +29,18 @@ type ResultsData struct {
 	Result   string `json:"result"`
 	Engine   string `json:"engine"`
 	Updated  string `json:"updated"`
+}
+
+// ScanResults json object
+type ScanResults struct {
+	Permalink    string `json:"permalink"`
+	Resource     string `json:"resource"`
+	ResponseCode int    `json:"response_code"`
+	ScanID       string `json:"scan_id"`
+	VerboseMsg   string `json:"verbose_msg"`
+	MD5          string `json:"md5"`
+	Sha1         string `json:"sha1"`
+	Sha256       string `json:"sha256"`
 }
 
 func getopt(name, dfault string) string {
@@ -61,12 +74,79 @@ func printMarkDownTable(virustotal virustotal) {
 	table.Print()
 }
 
-func scanFile(path string) {
-	fmt.Println("Uploading file to virustotal...")
+// scanFile uploads file to virustotal
+func scanFile(path string, apikey string) {
+	// fmt.Println("Uploading file to virustotal...")
+	fd, err := grequests.FileUploadFromDisk(path)
+
+	if err != nil {
+		log.Println("Unable to open file: ", err)
+	}
+
+	// This will upload the file as a multipart mime request
+	resp, err := grequests.Post("https://www.virustotal.com/vtapi/v2/file/scan",
+		&grequests.RequestOptions{
+			Files: fd,
+			Params: map[string]string{
+				"apikey": apikey,
+				// "notify_url": notify_url,
+				// "notify_changes_only": bool,
+			},
+		})
+
+	if err != nil {
+		log.Println("Unable to make request", resp.Error)
+	}
+
+	if resp.Ok != true {
+		log.Println("Request did not return OK")
+	}
+
+	fmt.Println(resp.String())
+
+	var scanResults ScanResults
+	resp.JSON(&scanResults)
+	// fmt.Printf("%#v", scanResults)
+
+	// // TODO: wait for an hour!?!?!? or create a notify URL endpoint?!?!?!
+	ro := &grequests.RequestOptions{
+		Params: map[string]string{
+			"resource": scanResults.Sha256,
+			"scan_id":  scanResults.ScanID,
+			"apikey":   apikey,
+			"allinfo":  "1",
+		},
+	}
+	resp, err = grequests.Get("https://www.virustotal.com/vtapi/v2/file/report", ro)
+
+	if err != nil {
+		log.Fatalln("Unable to make request: ", err)
+	}
+
+	if resp.Ok != true {
+		log.Println("Request did not return OK")
+	}
+
+	fmt.Println(resp.String())
 }
 
-func lookupHash(path string) {
-	fmt.Println("Getting virustotal report...")
+// lookupHash retreieves the virustotal file report for the given hash
+func lookupHash(hash string, apikey string) {
+	// fmt.Println("Getting virustotal report...")
+	ro := &grequests.RequestOptions{
+		Params: map[string]string{
+			"resource": hash,
+			"apikey":   apikey,
+			"allinfo":  "1",
+		},
+	}
+	resp, err := grequests.Get("https://www.virustotal.com/vtapi/v2/file/report", ro)
+
+	if err != nil {
+		log.Fatalln("Unable to make request: ", err)
+	}
+
+	fmt.Println(resp.String())
 }
 
 var appHelpTemplate = `Usage: {{.Name}} {{if .Flags}}[OPTIONS] {{end}}COMMAND [arg...]
@@ -139,7 +219,7 @@ func main() {
 					if _, err := os.Stat(path); os.IsNotExist(err) {
 						assert(err)
 					}
-					scanFile(path)
+					scanFile(path, apikey)
 				} else {
 					log.Fatal(fmt.Errorf("Please supply a file to upload to VirusTotal."))
 				}
@@ -157,7 +237,7 @@ func main() {
 				}
 
 				if c.Args().Present() {
-					lookupHash(c.Args().First())
+					lookupHash(c.Args().First(), apikey)
 				} else {
 					log.Fatal(fmt.Errorf("Please supply a MD5/SHA1/SHA256 hash to query."))
 				}
