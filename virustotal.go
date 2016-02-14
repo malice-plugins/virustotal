@@ -75,14 +75,14 @@ func printStatus(resp gorequest.Response, body string, errs []error) {
 	fmt.Println(resp.Status)
 }
 
-func printMarkDownTable(virustotal virustotal) {
+func printMarkDownTable(virustotal ScanResults) {
 	fmt.Println("#### virustotal")
 	table := clitable.New([]string{"Ratio", "Link", "API", "Scanned"})
 	table.AddRow(map[string]interface{}{
-		"Ratio":   virustotal.Results.Infected,
-		"Link":    virustotal.Results.Result,
-		"API":     virustotal.Results.Engine,
-		"Scanned": virustotal.Results.Updated,
+		// "Ratio":   getRatio(virustotal.Positives, virustotal.Total),
+		"Link": fmt.Sprintf("[link](%s)", virustotal.Permalink),
+		// "API":     virustotal.ApiType,
+		"Scanned": time.Now(),
 	})
 	table.Markdown = true
 	table.Print()
@@ -168,6 +168,11 @@ func lookupHash(hash string, apikey string) string {
 
 	// fmt.Println(resp.String())
 	return resp.String()
+}
+
+func getRatio(positives int, total int) string {
+	ratio := positives / total
+	return fmt.Sprintf("%d%%", ratio)
 }
 
 func shortenPermalink(longURL string) string {
@@ -283,7 +288,7 @@ func main() {
 				if c.Args().Present() {
 					vtReport := lookupHash(c.Args().First(), apikey)
 					if c.Bool("table") {
-						printMarkDownTable(vtReport)
+						// printMarkDownTable(vtReport)
 					} else {
 						fmt.Println(vtReport)
 					}

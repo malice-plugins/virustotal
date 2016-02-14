@@ -155,9 +155,9 @@ This will output to stdout and POST to malice results API webhook endpoint.
 ### Sample Output STDOUT (Markdown Table):
 ---
 #### virustotal
-| Ratio    | Link           | API    | Scanned  |
-| -------- | -------------- | ------ | -------- |
-| 85 %     | bit.ly/1ThieJ6 | Public | 20160213 |
+| Ratio    | Link                   | API    | Scanned  |
+| -------- | ---------------------- | ------ | -------- |
+| 85 %     | [link](bit.ly/1ThieJ6) | Public | 20160213 |
 ---
 ### To Run on OSX
  - Install [Homebrew](http://brew.sh)
