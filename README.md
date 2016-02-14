@@ -23,7 +23,7 @@ This repository contains a **Dockerfile** of **Malice VirusTotal Plugin** for [D
 
 ### Usage
 
-    docker run -it --rm malice/virustotal HASH
+    docker run --rm malice/virustotal --api APIKEY lookup HASH
 
 ```bash
 Usage: virustotal [OPTIONS] COMMAND [arg...]
