@@ -28,7 +28,7 @@ This repository contains a **Dockerfile** of **Malice VirusTotal Plugin** for [D
 ```bash
 Usage: virustotal [OPTIONS] COMMAND [arg...]
 
-Malice virustotal Plugin
+Malice VirusTotal Plugin
 
 Version: v0.1.0, BuildTime: 20160214
 
@@ -39,11 +39,13 @@ Options:
   --table, -t	output as Markdown table
   --post, -p	POST results to Malice webhook [$MALICE_ENDPOINT]
   --proxy, -x	proxy settings for Malice webhook endpoint [$MALICE_PROXY]
+  --api 	VirusTotal API key [$MALICE_VT_API]
   --help, -h	show help
   --version, -v	print the version
 
 Commands:
-  update	Update virus definitions
+  scan		Upload binary to VirusTotal for scanning
+  lookup	Get file hash scan report
   help		Shows a list of commands or help for one command
 
 Run 'virustotal COMMAND --help' for more information on a command.

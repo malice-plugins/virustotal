@@ -10,12 +10,12 @@ RUN apk-install -t build-deps go git mercurial \
   && export GOPATH=/go \
   && go version \
   && go get \
-  && go build -ldflags "-X main.Version=$(cat VERSION) -X main.BuildTime=$(date -u +%Y%m%d)" -o /bin/api \
+  && go build -ldflags "-X main.Version=$(cat VERSION) -X main.BuildTime=$(date -u +%Y%m%d)" -o /bin/virustotal \
   && rm -rf /go \
   && apk del --purge build-deps
 
 WORKDIR /malware
 
-ENTRYPOINT ["/bin/api"]
+ENTRYPOINT ["/bin/virustotal"]
 
 CMD ["--help"]

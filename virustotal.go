@@ -97,6 +97,7 @@ func main() {
 	app.Version = Version + ", BuildTime: " + BuildTime
 	app.Compiled, _ = time.Parse("20060102", BuildTime)
 	app.Usage = "Malice VirusTotal Plugin"
+	var apikey string
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
 			Name:  "table, t",
@@ -113,26 +114,53 @@ func main() {
 			EnvVar: "MALICE_PROXY",
 		},
 		cli.StringFlag{
-			Name:   "api",
-			Usage:  "VirusTotal API key",
-			EnvVar: "MALICE_VT_API",
+			Name:        "api",
+			Value:       "",
+			Usage:       "VirusTotal API key",
+			EnvVar:      "MALICE_VT_API",
+			Destination: &apikey,
 		},
 	}
 	app.Commands = []cli.Command{
 		{
-			Name:    "scan",
-			Aliases: []string{"s"},
-			Usage:   "Upload binary to VirusTotal for scanning",
+			Name:      "scan",
+			Aliases:   []string{"s"},
+			Usage:     "Upload binary to VirusTotal for scanning",
+			ArgsUsage: "FILE to upload to VirusTotal",
 			Action: func(c *cli.Context) {
-				scanFile(c.Args().First())
+				// Check for valid apikey
+				if apikey == "" {
+					log.Fatal(fmt.Errorf("Please supply a valid VT_API key with the flag '--api'."))
+				}
+
+				if c.Args().Present() {
+					path := c.Args().First()
+					// Check that file exists
+					if _, err := os.Stat(path); os.IsNotExist(err) {
+						assert(err)
+					}
+					scanFile(path)
+				} else {
+					log.Fatal(fmt.Errorf("Please supply a file to upload to VirusTotal."))
+				}
 			},
 		},
 		{
-			Name:    "lookup",
-			Aliases: []string{"l"},
-			Usage:   "Get file hash scan report",
+			Name:      "lookup",
+			Aliases:   []string{"l"},
+			Usage:     "Get file hash scan report",
+			ArgsUsage: "MD5/SHA1/SHA256 hash of file",
 			Action: func(c *cli.Context) {
-				lookupHash(c.Args().First())
+				// Check for valid apikey
+				if apikey == "" {
+					log.Fatal(fmt.Errorf("Please supply a valid VT_API key with the flag '--api'."))
+				}
+
+				if c.Args().Present() {
+					lookupHash(c.Args().First())
+				} else {
+					log.Fatal(fmt.Errorf("Please supply a MD5/SHA1/SHA256 hash to query."))
+				}
 			},
 		},
 	}
