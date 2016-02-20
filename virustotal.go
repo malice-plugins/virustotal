@@ -248,6 +248,7 @@ func main() {
 	app.Compiled, _ = time.Parse("20060102", BuildTime)
 	app.Usage = "Malice VirusTotal Plugin"
 	var apikey string
+	var table bool
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
 			Name:   "post, p",
@@ -258,6 +259,11 @@ func main() {
 			Name:   "proxy, x",
 			Usage:  "proxy settings for Malice webhook endpoint",
 			EnvVar: "MALICE_PROXY",
+		},
+		cli.BoolFlag{
+			Name:        "table, t",
+			Usage:       "output as Markdown table",
+			Destination: &table,
 		},
 		cli.StringFlag{
 			Name:        "api",
@@ -273,12 +279,6 @@ func main() {
 			Aliases:   []string{"s"},
 			Usage:     "Upload binary to VirusTotal for scanning",
 			ArgsUsage: "FILE to upload to VirusTotal",
-			Flags: []cli.Flag{
-				cli.BoolFlag{
-					Name:  "table, t",
-					Usage: "output as Markdown table",
-				},
-			},
 			Action: func(c *cli.Context) {
 				// Check for valid apikey
 				if apikey == "" {
@@ -302,12 +302,6 @@ func main() {
 			Aliases:   []string{"l"},
 			Usage:     "Get file hash scan report",
 			ArgsUsage: "MD5/SHA1/SHA256 hash of file",
-			Flags: []cli.Flag{
-				cli.BoolFlag{
-					Name:  "table, t",
-					Usage: "output as Markdown table",
-				},
-			},
 			Action: func(c *cli.Context) {
 				// Check for valid apikey
 				if apikey == "" {
@@ -317,7 +311,7 @@ func main() {
 				if c.Args().Present() {
 					vtReport := lookupHash(c.Args().First(), apikey)
 					vt := virustotal{Results: vtReport}
-					if c.Bool("table") {
+					if table {
 						printMarkDownTable(vt)
 					} else {
 						vtJSON, err := json.Marshal(vt)
