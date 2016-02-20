@@ -100,7 +100,7 @@ func printMarkDownTable(virustotal virustotal) {
 		"Link":  fmt.Sprintf("[link](%s)", virustotal.Results.Permalink),
 		"API":   "Public",
 		// "API":     virustotal.ApiType,
-		"Scanned": time.Now().Format("Mon 2006Jan02 15:04:05"),
+		"Scanned": virustotal.Results.ScanDate,
 	})
 	table.Markdown = true
 	table.Print()
@@ -180,14 +180,20 @@ func lookupHash(hash string, apikey string) ResultsData {
 		log.Fatalln("Unable to make request: ", err)
 	}
 
+	if resp.StatusCode == 204 {
+		log.Fatalln("Used more than 4 queries per minute")
+	}
+
 	if resp.Ok != true {
 		log.Println("Request did not return OK")
 	}
 	var vtResult ResultsData
 	// fmt.Println(resp.String())
-	// return resp.String()
 	resp.JSON(&vtResult)
 	// fmt.Printf("%#v", vtResult)
+	t, _ := time.Parse("2006-01-02 15:04:05", vtResult.ScanDate)
+	vtResult.ScanDate = t.Format("Mon 2006Jan02 15:04:05")
+
 	return vtResult
 }
 
