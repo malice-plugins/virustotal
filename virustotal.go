@@ -94,16 +94,20 @@ func printStatus(resp gorequest.Response, body string, errs []error) {
 
 func printMarkDownTable(virustotal virustotal) {
 	fmt.Println("#### virustotal")
-	table := clitable.New([]string{"Ratio", "Link", "API", "Scanned"})
-	table.AddRow(map[string]interface{}{
-		"Ratio": getRatio(virustotal.Results.Positives, virustotal.Results.Total),
-		"Link":  fmt.Sprintf("[link](%s)", virustotal.Results.Permalink),
-		"API":   "Public",
-		// "API":     virustotal.ApiType,
-		"Scanned": virustotal.Results.ScanDate,
-	})
-	table.Markdown = true
-	table.Print()
+	if virustotal.Results.ResponseCode == 0 {
+		fmt.Println(" - Not found")
+	} else {
+		table := clitable.New([]string{"Ratio", "Link", "API", "Scanned"})
+		table.AddRow(map[string]interface{}{
+			"Ratio": getRatio(virustotal.Results.Positives, virustotal.Results.Total),
+			"Link":  fmt.Sprintf("[link](%s)", virustotal.Results.Permalink),
+			"API":   "Public",
+			// "API":     virustotal.ApiType,
+			"Scanned": virustotal.Results.ScanDate,
+		})
+		table.Markdown = true
+		table.Print()
+	}
 }
 
 // scanFile uploads file to virustotal
