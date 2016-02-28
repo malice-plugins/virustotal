@@ -93,7 +93,7 @@ func printStatus(resp gorequest.Response, body string, errs []error) {
 }
 
 func printMarkDownTable(virustotal virustotal) {
-	fmt.Println("#### virustotal")
+	fmt.Println("#### VirusTotal")
 	if virustotal.Results.ResponseCode == 0 {
 		fmt.Println(" - Not found")
 	} else {
