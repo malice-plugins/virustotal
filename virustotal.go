@@ -278,7 +278,7 @@ func shortenPermalink(longURL string) string {
 }
 
 // writeToDatabase upserts plugin results into Database
-func writeToDatabase(results pluginResults, host string) {
+func writeToDatabase(results pluginResults) {
 
 	address := fmt.Sprintf("%s:28015", getopt("MALICE_RETHINKDB", "rethink"))
 
