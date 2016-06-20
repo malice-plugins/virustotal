@@ -403,7 +403,7 @@ func main() {
 						vtJSON, err := json.Marshal(vtReport)
 						assert(err)
 						// upsert into Database
-						writeToDatabase(vtReport, rethinkdb)
+						writeToDatabase(vtReport)
 						// write to stdout
 						fmt.Println(string(vtJSON))
 					}
