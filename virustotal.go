@@ -44,12 +44,12 @@ type ResultsData struct {
 	Scans        map[string]Scan `json:"scans"`
 	Permalink    string          `json:"permalink"`
 	Resource     string          `json:"resource"`
-	ResponseCode int             `json:"response_code"`
+	ResponseCode int             `json:"response_code" mapstructure:"response_code"`
 	Total        int             `json:"total"`
 	Positives    int             `json:"positives"`
-	ScanID       string          `json:"scan_id"`
-	ScanDate     string          `json:"scan_date"`
-	VerboseMsg   string          `json:"verbose_msg"`
+	ScanID       string          `json:"scan_id" mapstructure:"scan_id"`
+	ScanDate     string          `json:"scan_date" mapstructure:"scan_date"`
+	VerboseMsg   string          `json:"verbose_msg" mapstructure:"verbose_msg"`
 	MD5          string          `json:"md5"`
 	Sha1         string          `json:"sha1"`
 	Sha256       string          `json:"sha256"`
@@ -67,9 +67,9 @@ type Scan struct {
 type ScanResults struct {
 	Permalink    string `json:"permalink"`
 	Resource     string `json:"resource"`
-	ResponseCode int    `json:"response_code"`
-	ScanID       string `json:"scan_id"`
-	VerboseMsg   string `json:"verbose_msg"`
+	ResponseCode int    `json:"response_code" mapstructure:"response_code"`
+	ScanID       string `json:"scan_id" mapstructure:"scan_id"`
+	VerboseMsg   string `json:"verbose_msg" mapstructure:"verbose_msg"`
 	MD5          string `json:"md5"`
 	Sha1         string `json:"sha1"`
 	Sha256       string `json:"sha256"`
