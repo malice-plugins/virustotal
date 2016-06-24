@@ -23,6 +23,11 @@ var Version string
 // BuildTime stores the plugin's build time
 var BuildTime string
 
+const (
+	name     = "virustotal"
+	category = "intel"
+)
+
 // VirusTotal is a type
 type VirusTotal struct {
 	Data interface{} `json:"data" gorethink:"data"`
@@ -289,10 +294,30 @@ func writeToDatabase(results pluginResults) {
 		Database: "malice",
 	})
 	if err == nil {
-		// upsert into RethinkDB
-		resp, err := r.Table("samples").Insert(results, r.InsertOpts{Conflict: "replace"}).RunWrite(session)
+		res, err := r.Table("samples").Get(results.ID).Run(session)
 		assert(err)
-		log.Debug(resp)
+		defer res.Close()
+
+		if res.IsNil() {
+			// upsert into RethinkDB
+			resp, err := r.Table("samples").Insert(results, r.InsertOpts{Conflict: "replace"}).RunWrite(session)
+			assert(err)
+			log.Debug(resp)
+		} else {
+			resp, err := r.Table("samples").Get(results.ID).Update(map[string]interface{}{
+				"plugins": map[string]interface{}{
+					category: map[string]interface{}{
+						name: results.VT,
+					},
+				},
+			}).RunWrite(session)
+			assert(err)
+
+			log.Debug(resp)
+		}
+
+	} else {
+		log.Debug(err)
 	}
 }
 
@@ -328,6 +353,10 @@ func main() {
 	var rethinkdb string
 	var table bool
 	app.Flags = []cli.Flag{
+		cli.BoolFlag{
+			Name:  "verbose, V",
+			Usage: "verbose output",
+		},
 		cli.BoolFlag{
 			Name:   "post, p",
 			Usage:  "POST results to Malice webhook",
@@ -369,13 +398,16 @@ func main() {
 				if apikey == "" {
 					log.Fatal(fmt.Errorf("Please supply a valid VT_API key with the flag '--api'."))
 				}
-
+				if c.Bool("verbose") {
+					log.SetLevel(log.DebugLevel)
+				}
 				if c.Args().Present() {
 					path := c.Args().First()
 					// Check that file exists
 					if _, err := os.Stat(path); os.IsNotExist(err) {
 						assert(err)
 					}
+					// upload file to virustotal.com
 					scanFile(path, apikey)
 				} else {
 					log.Fatal(fmt.Errorf("Please supply a file to upload to VirusTotal."))
@@ -393,7 +425,9 @@ func main() {
 				if apikey == "" {
 					log.Fatal(fmt.Errorf("Please supply a valid VT_API key with the flag '--api'."))
 				}
-
+				if c.Bool("verbose") {
+					log.SetLevel(log.DebugLevel)
+				}
 				if c.Args().Present() {
 					vtReport := lookupHash(c.Args().First(), apikey)
 					// vt := virustotal{Results: vtReport}
