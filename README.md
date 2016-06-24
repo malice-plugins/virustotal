@@ -15,7 +15,7 @@ This repository contains a **Dockerfile** of **Malice VirusTotal Plugin** for [D
 
 ### Dependencies
 
-* [gliderlabs/alpine:3.3](https://index.docker.io/_/gliderlabs/alpine/)
+* [gliderlabs/alpine](https://index.docker.io/_/gliderlabs/alpine/)
 
 
 ### Installation
