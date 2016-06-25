@@ -1,31 +1,30 @@
 ![VT logo](https://raw.githubusercontent.com/maliceio/malice-virustotal/master/logo.png)
-# malice-virustotal
 
-[![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)
-[![Docker Stars](https://img.shields.io/docker/stars/malice/virustotal.svg)][hub]
-[![Docker Pulls](https://img.shields.io/docker/pulls/malice/virustotal.svg)][hub]
-[![Image Size](https://img.shields.io/imagelayers/image-size/malice/virustotal/latest.svg)](https://imagelayers.io/?images=malice/virustotal:latest)
-[![Image Layers](https://img.shields.io/imagelayers/layers/malice/virustotal/latest.svg)](https://imagelayers.io/?images=malice/virustotal:latest)
+malice-virustotal
+=================
+
+[![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org) [![Docker Stars](https://img.shields.io/docker/stars/malice/virustotal.svg)](https://hub.docker.com/r/malice/virustotal/) [![Docker Pulls](https://img.shields.io/docker/pulls/malice/virustotal.svg)](https://hub.docker.com/r/malice/virustotal/)
 
 Malice VirusTotal Plugin
 
 This repository contains a **Dockerfile** of **Malice VirusTotal Plugin** for [Docker](https://www.docker.io/)'s [trusted build](https://index.docker.io/u/malice/virustotal/) published to the public [DockerHub](https://index.docker.io/).
 
-> *NOTE:* Currently only supports Public API  
+> *NOTE:* Currently only supports Public API
 
 ### Dependencies
 
-* [gliderlabs/alpine](https://index.docker.io/_/gliderlabs/alpine/)
-
+-	[gliderlabs/alpine](https://index.docker.io/_/gliderlabs/alpine/)
 
 ### Installation
 
-1. Install [Docker](https://www.docker.io/).
-2. Download [trusted build](https://hub.docker.com/r/malice/virustotal/) from public [DockerHub](https://hub.docker.com): `docker pull malice/virustotal`
+1.	Install [Docker](https://www.docker.io/).
+2.	Download [trusted build](https://hub.docker.com/r/malice/virustotal/) from public [DockerHub](https://hub.docker.com): `docker pull malice/virustotal`
 
 ### Usage
 
-    docker run --rm malice/virustotal --api APIKEY lookup HASH
+```
+docker run --rm malice/virustotal --api APIKEY lookup HASH
+```
 
 ```bash
 Usage: virustotal [OPTIONS] COMMAND [arg...]
@@ -56,6 +55,7 @@ Run 'virustotal COMMAND --help' for more information on a command.
 This will output to stdout and POST to malice results API webhook endpoint.
 
 ### Sample Output JSON:
+
 ```json
 {
   "virustotal": {
@@ -154,15 +154,22 @@ This will output to stdout and POST to malice results API webhook endpoint.
   }
 }
 ```
+
 ### Sample Output STDOUT (Markdown Table):
+
 ---
+
 #### virustotal
-| Ratio   | Link                          | API    | Scanned                |
-| ------- | ----------------------------- | ------ | ---------------------- |
-| 85%     | [link](http://bit.ly/1ThieJ6) | Public | Sun 2016Feb14 14:00:50 |
+
+| Ratio | Link                          | API    | Scanned                |
+|-------|-------------------------------|--------|------------------------|
+| 85%   | [link](http://bit.ly/1ThieJ6) | Public | Sun 2016Feb14 14:00:50 |
+
 ---
+
 ### To Run on OSX
- - Install [Homebrew](http://brew.sh)
+
+-	Install [Homebrew](http://brew.sh)
 
 ```bash
 $ brew install caskroom/cask/brew-cask
@@ -182,6 +189,5 @@ Find a bug? Want more features? Find something missing in the documentation? Let
 ### Credits
 
 ### License
-MIT Copyright (c) 2016 **blacktop**
 
-[hub]: https://hub.docker.com/r/malice/virustotal/
+MIT Copyright (c) 2016 **blacktop**
