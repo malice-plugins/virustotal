@@ -9,11 +9,11 @@ import (
 	"time"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/codegangsta/cli"
 	"github.com/crackcomm/go-clitable"
 	"github.com/levigross/grequests"
 	"github.com/mitchellh/mapstructure"
 	"github.com/parnurzeal/gorequest"
+	"github.com/urfave/cli"
 	r "gopkg.in/dancannon/gorethink.v2"
 )
 
