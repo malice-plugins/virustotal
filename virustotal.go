@@ -294,6 +294,7 @@ func writeToDatabase(results pluginResults) {
 		Database: "malice",
 	})
 	defer session.Close()
+
 	if err == nil {
 		res, err := r.Table("samples").Get(results.ID).Run(session)
 		assert(err)
