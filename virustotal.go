@@ -293,6 +293,7 @@ func writeToDatabase(results pluginResults) {
 		Timeout:  5 * time.Second,
 		Database: "malice",
 	})
+	defer session.Close()
 	if err == nil {
 		res, err := r.Table("samples").Get(results.ID).Run(session)
 		assert(err)
