@@ -245,7 +245,7 @@ func lookupHash(hash string, apikey string) pluginResults {
 	// fmt.Println(string(vtJSON))
 
 	// results.ID = "befb88b89c2eb401900a68e9f5b78764203f2b48264fcc3f7121bf04a57fd408"
-	results.ID = vtResult.Sha256
+	results.ID = getopt("MALICE_SCANID", vtResult.Sha256)
 	results.VT.Now = time.Now().Format("Mon 2006Jan02 15:04:05")
 
 	// t, _ := time.Parse("2006-01-02 15:04:05", vtResult.ScanDate)
