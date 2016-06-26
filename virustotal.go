@@ -430,14 +430,15 @@ func main() {
 				}
 				if c.Args().Present() {
 					vtReport := lookupHash(c.Args().First(), apikey)
-					// vt := virustotal{Results: vtReport}
+
+					// upsert into Database
+					writeToDatabase(vtReport)
+
 					if table {
 						printMarkDownTable(vtReport.VT)
 					} else {
 						vtJSON, err := json.Marshal(vtReport)
 						assert(err)
-						// upsert into Database
-						writeToDatabase(vtReport)
 						// write to stdout
 						fmt.Println(string(vtJSON))
 					}
