@@ -7,7 +7,7 @@ malice-virustotal
 
 Malice VirusTotal Plugin
 
-This repository contains a **Dockerfile** of **Malice VirusTotal Plugin** for [Docker](https://www.docker.io/)'s [trusted build](https://index.docker.io/u/malice/virustotal/) published to the public [DockerHub](https://index.docker.io/).
+This repository contains a **Dockerfile** of the [VirusTotal](https://virustotal.com) malice plugin **malice/virustotal**.
 
 > *NOTE:* Currently only supports Public API
 
