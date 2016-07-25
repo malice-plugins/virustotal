@@ -196,7 +196,7 @@ Find a bug? Want more features? Find something missing in the documentation? Let
 
 ### Credits
 
-### TODO
+### ToDo
 
 -	[ ] Add docs like [registrator](http://gliderlabs.com/registrator/latest/#getting-registrator)
 -	[ ] Break out common plugin components into a golang package
