@@ -196,6 +196,11 @@ Find a bug? Want more features? Find something missing in the documentation? Let
 
 ### Credits
 
-### License
+### TODO
+
+-	[ ] Add docs like [registrator](http://gliderlabs.com/registrator/latest/#getting-registrator)
+-	[ ] Break out common plugin components into a golang package
+
+	### License
 
 MIT Copyright (c) 2016 **blacktop**
