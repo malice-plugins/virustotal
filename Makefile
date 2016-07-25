@@ -28,8 +28,4 @@ circleci:
 	go get -u github.com/gliderlabs/glu
 	glu circleci
 
-.PHONY: build release docs
-
-docker images --format "{{.Size}}" virustotal
-
-	SIZE=$(docker images --format "{{.Size}}" $(NAME):$(VERSION))
+.PHONY: build release
