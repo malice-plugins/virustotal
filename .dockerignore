@@ -1,5 +1,7 @@
 # Ignore .git folder
 .git*
+release
+build
 
 .gitignore
 README.md
