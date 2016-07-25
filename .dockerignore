@@ -4,3 +4,6 @@
 .gitignore
 README.md
 LICENSE
+Makefile
+debug
+.vscode
