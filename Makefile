@@ -4,9 +4,7 @@ DEV_RUN_OPTS ?= --api 2539516d471d7beb6b28a720d7a25024edc0f7590d345fc74741864500
 
 dev:
 	docker build -f Dockerfile.dev -t $(NAME):dev .
-	docker run --rm \
-		-v /var/run/docker.sock:/tmp/docker.sock \
-		$(NAME):dev virustotal $(DEV_RUN_OPTS)
+	docker run --rm $(NAME):dev virustotal $(DEV_RUN_OPTS)
 
 build:
 	mkdir -p build
