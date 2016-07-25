@@ -3,7 +3,7 @@
 malice-virustotal
 =================
 
-[![Circle CI](https://circleci.com/gh/maliceio/malice-virustotal.png?style=shield)](https://circleci.com/gh/maliceio/malice-virustotal) [![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org) [![Docker Stars](https://img.shields.io/docker/stars/malice/virustotal.svg)](https://hub.docker.com/r/malice/virustotal/) [![Docker Pulls](https://img.shields.io/docker/pulls/malice/virustotal.svg)](https://hub.docker.com/r/malice/virustotal/) [![Docker Image](https://img.shields.io/badge/docker image-33.71 MB-blue.svg)](https://hub.docker.com/r/malice/virustotal/)
+[![Circle CI](https://circleci.com/gh/maliceio/malice-virustotal.png?style=shield)](https://circleci.com/gh/maliceio/malice-virustotal) [![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org) [![Docker Stars](https://img.shields.io/docker/stars/malice/virustotal.svg)](https://hub.docker.com/r/malice/virustotal/) [![Docker Pulls](https://img.shields.io/docker/pulls/malice/virustotal.svg)](https://hub.docker.com/r/malice/virustotal/) [![Docker Image](https://img.shields.io/badge/docker image-21.53 MB-blue.svg)](https://hub.docker.com/r/malice/virustotal/)
 
 Malice VirusTotal Plugin
 
