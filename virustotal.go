@@ -429,6 +429,8 @@ func main() {
 				}
 				if c.Bool("verbose") {
 					log.SetLevel(log.DebugLevel)
+				} else {
+					r.Log.Out = ioutil.Discard
 				}
 				if c.Args().Present() {
 					vtReport := lookupHash(c.Args().First(), apikey)
