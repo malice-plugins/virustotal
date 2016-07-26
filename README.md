@@ -13,7 +13,7 @@ This repository contains a **Dockerfile** of the [VirusTotal](https://virustotal
 
 ### Dependencies
 
--	[gliderlabs/alpine](https://index.docker.io/_/gliderlabs/alpine/)
+-	[malice/alpine](https://hub.docker.com/r/malice/alpine/)
 
 ### Installation
 
