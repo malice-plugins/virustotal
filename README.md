@@ -172,7 +172,7 @@ This will output to stdout and POST to malice results API webhook endpoint.
 ```bash
 $ docker volume create --name malice
 $ docker run -d -p 28015:28015 -p 8080:8080 -v malice:/data --name rethink rethinkdb
-$ docker run --rm -v /path/to/malware:/malware:ro --link rethink:rethink malice/virustotal --api APIKEY lookup HASH
+$ docker run --rm -v /path/to/malware:/malware:ro --link rethink malice/virustotal --api APIKEY lookup HASH
 ```
 
 ### To Run on OSX
