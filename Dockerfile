@@ -1,4 +1,4 @@
-FROM malice/alpine
+FROM malice/alpine:tini
 
 MAINTAINER blacktop, https://github.com/blacktop
 
@@ -8,7 +8,6 @@ RUN apk-install -t build-deps go git mercurial \
   && set -x \
   && echo "Building virustotal Go binary..." \
   && cd /go/src/github.com/maliceio/malice-virustotal \
-  && mv docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh \
   && export GOPATH=/go \
   && go version \
   && go get \
@@ -18,6 +17,6 @@ RUN apk-install -t build-deps go git mercurial \
 
 WORKDIR /malware
 
-ENTRYPOINT ["docker-entrypoint.sh"]
+ENTRYPOINT ["gosu","malice","/sbin/tini","--","virustotal"]
 
 CMD ["--help"]
