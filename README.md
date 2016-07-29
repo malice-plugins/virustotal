@@ -13,7 +13,7 @@ This repository contains a **Dockerfile** of the [VirusTotal](https://virustotal
 
 ### Dependencies
 
--	[malice/alpine](https://hub.docker.com/r/malice/alpine/)
+-	[malice/alpine:tini](https://hub.docker.com/r/malice/alpine/)
 
 ### Installation
 
@@ -175,24 +175,11 @@ $ docker run -d -p 28015:28015 -p 8080:8080 -v malice:/data --name rethink rethi
 $ docker run --rm -v /path/to/malware:/malware:ro --link rethink malice/virustotal --api APIKEY lookup HASH
 ```
 
-### To Run on OSX
-
--	Install [Homebrew](http://brew.sh)
-
-```bash
-$ brew install caskroom/cask/brew-cask
-$ brew cask install virtualbox
-$ brew install docker
-$ brew install docker-machine
-$ docker-machine create --driver virtualbox malice
-$ eval $(docker-machine env malice)
-```
-
 ### Documentation
 
 ### Issues
 
-Find a bug? Want more features? Find something missing in the documentation? Let me know! Please don't hesitate to [file an issue](https://github.com/maliceio/malice-av/issues/new) and I'll get right on it.
+Find a bug? Want more features? Find something missing in the documentation? Let me know! Please don't hesitate to [file an issue](https://github.com/maliceio/malice-virustotal/issues/new) and I'll get right on it.
 
 ### Credits
 
