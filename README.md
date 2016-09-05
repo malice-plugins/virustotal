@@ -172,7 +172,7 @@ This will output to stdout and POST to malice results API webhook endpoint.
 ```bash
 $ docker volume create --name malice
 $ docker run -d -p 28015:28015 -p 8080:8080 -v malice:/data --name rethink rethinkdb
-$ docker run --rm -v /path/to/malware:/malware:ro --link rethink malice/virustotal --api APIKEY lookup HASH
+$ docker run --rm --link rethink malice/virustotal --api APIKEY lookup HASH
 ```
 
 ### Documentation
@@ -180,8 +180,6 @@ $ docker run --rm -v /path/to/malware:/malware:ro --link rethink malice/virustot
 ### Issues
 
 Find a bug? Want more features? Find something missing in the documentation? Let me know! Please don't hesitate to [file an issue](https://github.com/maliceio/malice-virustotal/issues/new) and I'll get right on it.
-
-### Credits
 
 ### ToDo
 
