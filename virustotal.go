@@ -224,10 +224,10 @@ func shortenPermalink(longURL string) string {
 	return btl.Data.URL
 }
 
-func printMarkDownTable(virustotal VirusTotal) {
+func printMarkDownTable(virustotal map[string]interface{}) {
 
 	var vt ResultsData
-	err := mapstructure.Decode(virustotal.Data, &vt)
+	err := mapstructure.Decode(virustotal, &vt)
 	utils.Assert(err)
 
 	fmt.Println("#### VirusTotal")
@@ -359,12 +359,6 @@ func main() {
 					hash := c.Args().First()
 					vtReport := lookupHash(hash, apikey)
 
-					// fmt.Println(structs.IsStruct(vtReport))
-					// fmt.Printf("%#v\n", vtReport)
-					// s := structs.New(vtReport)
-					// fmt.Printf("%#v\n", s)
-					// data := s.Map()
-
 					// upsert into Database
 					elasticsearch.InitElasticSearch()
 					elasticsearch.WritePluginResultsToDatabase(elasticsearch.PluginResults{
@@ -375,7 +369,7 @@ func main() {
 					})
 
 					if table {
-						// printMarkDownTable(vtReport)
+						printMarkDownTable(vtReport)
 					} else {
 						vtJSON, err := json.Marshal(vtReport)
 						utils.Assert(err)
