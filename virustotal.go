@@ -1,20 +1,18 @@
 package main
 
 import (
-	"crypto/sha256"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"time"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/crackcomm/go-clitable"
 	"github.com/levigross/grequests"
+	"github.com/maliceio/go-plugin-utils/database/elasticsearch"
+	"github.com/maliceio/go-plugin-utils/utils"
 	"github.com/mitchellh/mapstructure"
-	"github.com/parnurzeal/gorequest"
 	"github.com/urfave/cli"
-	r "gopkg.in/dancannon/gorethink.v2"
 )
 
 // Version stores the plugin's version
@@ -30,13 +28,13 @@ const (
 
 // VirusTotal is a type
 type VirusTotal struct {
-	Data interface{} `json:"data" gorethink:"data"`
-	Now  string      `json:"now" gorethink:"now"`
+	Data interface{} `json:"data" structs:"data"`
+	Now  string      `json:"now" structs:"now"`
 }
 
 type pluginResults struct {
-	ID string     `json:"id" gorethink:"id,omitempty"`
-	VT VirusTotal `json:"virustotal" gorethink:"virustotal"`
+	ID string     `json:"id" structs:"id,omitempty"`
+	VT VirusTotal `json:"virustotal" structs:"virustotal"`
 }
 
 // virustotal json object
@@ -92,60 +90,6 @@ type bitlyData struct {
 	NewHash    int    `json:"new_hash"`
 	Hash       string `json:"hash"`
 	GlobalHash string `json:"global_hash"`
-}
-
-func getopt(name, dfault string) string {
-	value := os.Getenv(name)
-	if value == "" {
-		value = dfault
-	}
-	return value
-}
-
-func assert(err error) {
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
-// getSHA256 calculates a file's sha256sum
-func getSHA256(name string) string {
-
-	dat, err := ioutil.ReadFile(name)
-	assert(err)
-
-	h256 := sha256.New()
-	_, err = h256.Write(dat)
-	assert(err)
-
-	return fmt.Sprintf("%x", h256.Sum(nil))
-}
-
-func printStatus(resp gorequest.Response, body string, errs []error) {
-	fmt.Println(resp.Status)
-}
-
-func printMarkDownTable(virustotal VirusTotal) {
-
-	var vt ResultsData
-	err := mapstructure.Decode(virustotal.Data, &vt)
-	assert(err)
-
-	fmt.Println("#### VirusTotal")
-	if vt.ResponseCode == 0 {
-		fmt.Println(" - Not found")
-	} else {
-		table := clitable.New([]string{"Ratio", "Link", "API", "Scanned"})
-		table.AddRow(map[string]interface{}{
-			"Ratio": getRatio(vt.Positives, vt.Total),
-			"Link":  fmt.Sprintf("[link](%s)", vt.Permalink),
-			"API":   "Public",
-			// "API":     vt.ApiType,
-			"Scanned": vt.ScanDate,
-		})
-		table.Markdown = true
-		table.Print()
-	}
 }
 
 // scanFile uploads file to virustotal
@@ -206,7 +150,7 @@ func scanFile(path string, apikey string) string {
 }
 
 // lookupHash retreieves the virustotal file report for the given hash
-func lookupHash(hash string, apikey string) pluginResults {
+func lookupHash(hash string, apikey string) map[string]interface{} {
 	// NOTE: https://godoc.org/github.com/levigross/grequests
 	// fmt.Println("Getting virustotal report...")
 	ro := &grequests.RequestOptions{
@@ -230,23 +174,21 @@ func lookupHash(hash string, apikey string) pluginResults {
 		log.Println("Request did not return OK")
 	}
 
-	var results pluginResults
+	var results map[string]interface{}
 
-	resp.JSON(&results.VT.Data)
+	resp.JSON(&results)
 	// resp.JSON(&vtResult)
 
-	var vtResult ResultsData
-	err = mapstructure.Decode(results.VT.Data, &vtResult)
-	assert(err)
+	// var vtResult ResultsData
+	// err = mapstructure.Decode(results.Data, &vtResult)
+	// utils.Assert(err)
 
 	// vtJSON, err := json.Marshal(vtResult)
-	// assert(err)
+	// utils.Assert(err)
 	// // write to stdout
 	// fmt.Println(string(vtJSON))
 
-	// results.ID = "befb88b89c2eb401900a68e9f5b78764203f2b48264fcc3f7121bf04a57fd408"
-	results.ID = getopt("MALICE_SCANID", vtResult.Sha256)
-	results.VT.Now = time.Now().Format("Mon 2006Jan02 15:04:05")
+	// results.Now = time.Now().Format(time.RFC3339Nano)
 
 	// t, _ := time.Parse("2006-01-02 15:04:05", vtResult.ScanDate)
 	// vtResult.ScanDate = t.Format("Mon 2006Jan02 15:04:05")
@@ -282,45 +224,26 @@ func shortenPermalink(longURL string) string {
 	return btl.Data.URL
 }
 
-// writeToDatabase upserts plugin results into Database
-func writeToDatabase(results pluginResults) {
+func printMarkDownTable(virustotal VirusTotal) {
 
-	address := fmt.Sprintf("%s:28015", getopt("MALICE_RETHINKDB", "rethink"))
+	var vt ResultsData
+	err := mapstructure.Decode(virustotal.Data, &vt)
+	utils.Assert(err)
 
-	// connect to RethinkDB
-	session, err := r.Connect(r.ConnectOpts{
-		Address:  address,
-		Timeout:  5 * time.Second,
-		Database: "malice",
-	})
-
-	if err == nil {
-		defer session.Close()
-
-		res, err := r.Table("samples").Get(results.ID).Run(session)
-		assert(err)
-		defer res.Close()
-
-		if res.IsNil() {
-			// upsert into RethinkDB
-			resp, err := r.Table("samples").Insert(results, r.InsertOpts{Conflict: "replace"}).RunWrite(session)
-			assert(err)
-			log.Debug(resp)
-		} else {
-			resp, err := r.Table("samples").Get(results.ID).Update(map[string]interface{}{
-				"plugins": map[string]interface{}{
-					category: map[string]interface{}{
-						name: results.VT,
-					},
-				},
-			}).RunWrite(session)
-			assert(err)
-
-			log.Debug(resp)
-		}
-
+	fmt.Println("#### VirusTotal")
+	if vt.ResponseCode == 0 {
+		fmt.Println(" - Not found")
 	} else {
-		log.Debug(err)
+		table := clitable.New([]string{"Ratio", "Link", "API", "Scanned"})
+		table.AddRow(map[string]interface{}{
+			"Ratio": getRatio(vt.Positives, vt.Total),
+			"Link":  fmt.Sprintf("[link](%s)", vt.Permalink),
+			"API":   "Public",
+			// "API":     vt.ApiType,
+			"Scanned": vt.ScanDate,
+		})
+		table.Markdown = true
+		table.Print()
 	}
 }
 
@@ -353,7 +276,7 @@ func main() {
 	app.Compiled, _ = time.Parse("20060102", BuildTime)
 	app.Usage = "Malice VirusTotal Plugin"
 	var apikey string
-	var rethinkdb string
+	var elasitcsearch string
 	var table bool
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
@@ -383,11 +306,11 @@ func main() {
 			Destination: &apikey,
 		},
 		cli.StringFlag{
-			Name:        "rethinkdb",
+			Name:        "elasitcsearch",
 			Value:       "",
-			Usage:       "rethinkdb address for Malice to store results",
-			EnvVar:      "MALICE_RETHINKDB",
-			Destination: &rethinkdb,
+			Usage:       "elasitcsearch address for Malice to store results",
+			EnvVar:      "MALICE_ELASTICSEARCH",
+			Destination: &elasitcsearch,
 		},
 	}
 	app.Commands = []cli.Command{
@@ -408,7 +331,7 @@ func main() {
 					path := c.Args().First()
 					// Check that file exists
 					if _, err := os.Stat(path); os.IsNotExist(err) {
-						assert(err)
+						utils.Assert(err)
 					}
 					// upload file to virustotal.com
 					scanFile(path, apikey)
@@ -430,20 +353,32 @@ func main() {
 				}
 				if c.Bool("verbose") {
 					log.SetLevel(log.DebugLevel)
-				} else {
-					r.Log.Out = ioutil.Discard
 				}
+
 				if c.Args().Present() {
-					vtReport := lookupHash(c.Args().First(), apikey)
+					hash := c.Args().First()
+					vtReport := lookupHash(hash, apikey)
+
+					// fmt.Println(structs.IsStruct(vtReport))
+					// fmt.Printf("%#v\n", vtReport)
+					// s := structs.New(vtReport)
+					// fmt.Printf("%#v\n", s)
+					// data := s.Map()
 
 					// upsert into Database
-					writeToDatabase(vtReport)
+					elasticsearch.InitElasticSearch()
+					elasticsearch.WritePluginResultsToDatabase(elasticsearch.PluginResults{
+						ID:       utils.Getopt("MALICE_SCANID", hash),
+						Name:     name,
+						Category: category,
+						Data:     vtReport,
+					})
 
 					if table {
-						printMarkDownTable(vtReport.VT)
+						// printMarkDownTable(vtReport)
 					} else {
 						vtJSON, err := json.Marshal(vtReport)
-						assert(err)
+						utils.Assert(err)
 						// write to stdout
 						fmt.Println(string(vtJSON))
 					}
@@ -456,5 +391,5 @@ func main() {
 	}
 
 	err := app.Run(os.Args)
-	assert(err)
+	utils.Assert(err)
 }
