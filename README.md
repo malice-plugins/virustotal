@@ -3,7 +3,7 @@
 malice-virustotal
 =================
 
-[![Circle CI](https://circleci.com/gh/maliceio/malice-virustotal.png?style=shield)](https://circleci.com/gh/maliceio/malice-virustotal) [![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org) [![Docker Stars](https://img.shields.io/docker/stars/malice/virustotal.svg)](https://hub.docker.com/r/malice/virustotal/) [![Docker Pulls](https://img.shields.io/docker/pulls/malice/virustotal.svg)](https://hub.docker.com/r/malice/virustotal/) [![Docker Image](https://img.shields.io/badge/docker image-19.63 MB-blue.svg)](https://hub.docker.com/r/malice/virustotal/)
+[![Circle CI](https://circleci.com/gh/maliceio/malice-virustotal.png?style=shield)](https://circleci.com/gh/maliceio/malice-virustotal) [![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org) [![Docker Stars](https://img.shields.io/docker/stars/malice/virustotal.svg)](https://hub.docker.com/r/malice/virustotal/) [![Docker Pulls](https://img.shields.io/docker/pulls/malice/virustotal.svg)](https://hub.docker.com/r/malice/virustotal/) [![Docker Image](https://img.shields.io/badge/docker image-22.17 MB-blue.svg)](https://hub.docker.com/r/malice/virustotal/)
 
 Malice VirusTotal Plugin
 
@@ -186,7 +186,7 @@ Find a bug? Want more features? Find something missing in the documentation? Let
 ### ToDo
 
 -	[ ] Add docs like [registrator](http://gliderlabs.com/registrator/latest/#getting-registrator)
--	[ ] Break out common plugin components into a golang package
+-	[x] Break out common plugin components into a golang package
 
 ### License
 
