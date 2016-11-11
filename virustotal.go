@@ -275,9 +275,6 @@ func main() {
 	app.Version = Version + ", BuildTime: " + BuildTime
 	app.Compiled, _ = time.Parse("20060102", BuildTime)
 	app.Usage = "Malice VirusTotal Plugin"
-	var apikey string
-	var elasitcsearch string
-	var table bool
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
 			Name:  "verbose, V",
@@ -294,23 +291,20 @@ func main() {
 			EnvVar: "MALICE_PROXY",
 		},
 		cli.BoolFlag{
-			Name:        "table, t",
-			Usage:       "output as Markdown table",
-			Destination: &table,
+			Name:  "table, t",
+			Usage: "output as Markdown table",
 		},
 		cli.StringFlag{
-			Name:        "api",
-			Value:       "",
-			Usage:       "VirusTotal API key",
-			EnvVar:      "MALICE_VT_API",
-			Destination: &apikey,
+			Name:   "api",
+			Value:  "",
+			Usage:  "VirusTotal API key",
+			EnvVar: "MALICE_VT_API",
 		},
 		cli.StringFlag{
-			Name:        "elasitcsearch",
-			Value:       "",
-			Usage:       "elasitcsearch address for Malice to store results",
-			EnvVar:      "MALICE_ELASTICSEARCH",
-			Destination: &elasitcsearch,
+			Name:   "elasitcsearch",
+			Value:  "",
+			Usage:  "elasitcsearch address for Malice to store results",
+			EnvVar: "MALICE_ELASTICSEARCH",
 		},
 	}
 	app.Commands = []cli.Command{
@@ -321,7 +315,7 @@ func main() {
 			ArgsUsage: "FILE to upload to VirusTotal",
 			Action: func(c *cli.Context) error {
 				// Check for valid apikey
-				if apikey == "" {
+				if c.String("api") == "" {
 					log.Fatal(fmt.Errorf("Please supply a valid VT_API key with the flag '--api'."))
 				}
 				if c.Bool("verbose") {
@@ -334,7 +328,7 @@ func main() {
 						utils.Assert(err)
 					}
 					// upload file to virustotal.com
-					scanFile(path, apikey)
+					scanFile(path, c.String("api"))
 				} else {
 					log.Fatal(fmt.Errorf("Please supply a file to upload to VirusTotal."))
 				}
@@ -348,7 +342,7 @@ func main() {
 			ArgsUsage: "MD5/SHA1/SHA256 hash of file",
 			Action: func(c *cli.Context) error {
 				// Check for valid apikey
-				if apikey == "" {
+				if c.String("api") == "" {
 					log.Fatal(fmt.Errorf("Please supply a valid VT_API key with the flag '--api'."))
 				}
 				if c.Bool("verbose") {
@@ -357,10 +351,10 @@ func main() {
 
 				if c.Args().Present() {
 					hash := c.Args().First()
-					vtReport := lookupHash(hash, apikey)
+					vtReport := lookupHash(hash, c.String("api"))
 
 					// upsert into Database
-					elasticsearch.InitElasticSearch()
+					elasticsearch.InitElasticSearch(c.String("elasitcsearch"))
 					elasticsearch.WritePluginResultsToDatabase(elasticsearch.PluginResults{
 						ID:       utils.Getopt("MALICE_SCANID", hash),
 						Name:     name,
@@ -368,7 +362,7 @@ func main() {
 						Data:     vtReport,
 					})
 
-					if table {
+					if c.Bool("table") {
 						printMarkDownTable(vtReport)
 					} else {
 						vtJSON, err := json.Marshal(vtReport)

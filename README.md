@@ -54,9 +54,10 @@ Commands:
 Run 'virustotal COMMAND --help' for more information on a command.
 ```
 
-This will output to stdout and POST to malice results API webhook endpoint.
+Sample Output
+-------------
 
-### Sample Output JSON:
+### JSON:
 
 ```json
 {
@@ -157,7 +158,7 @@ This will output to stdout and POST to malice results API webhook endpoint.
 }
 ```
 
-### Sample Output STDOUT (Markdown Table):
+### STDOUT (Markdown Table):
 
 ---
 
@@ -169,19 +170,32 @@ This will output to stdout and POST to malice results API webhook endpoint.
 
 ---
 
+Documentation
+-------------
+
 ### To write results to [ElasticSearch](https://www.elastic.co/products/elasticsearch)
 
 ```bash
 $ docker volume create --name malice
-$ docker run -d -p 9200:9200 -v malice:/data --name elastic elasticsearch
-$ docker run --rm --link elastic malice/virustotal --api APIKEY lookup HASH
+$ docker run -d --name elastic \
+                -p 9200:9200 \
+                -v malice:/usr/share/elasticsearch/data \
+                 blacktop/elasticsearch
+$ docker run --rm --link elastic malice/virustotal HASH
 ```
-
-### Documentation
-
 ### Issues
 
 Find a bug? Want more features? Find something missing in the documentation? Let me know! Please don't hesitate to [file an issue](https://github.com/maliceio/malice-virustotal/issues/new) and I'll get right on it.
+
+### CHANGELOG
+
+See [`CHANGELOG.md`](https://github.com/maliceio/malice-virustotal/blob/master/CHANGELOG.md)
+
+### Contributing
+
+[See all contributors on GitHub](https://github.com/maliceio/malice-virustotal/graphs/contributors).
+
+Please update the [CHANGELOG.md](https://github.com/maliceio/malice-virustotal/blob/master/CHANGELOG.md) and submit a [Pull Request on GitHub](https://help.github.com/articles/using-pull-requests/).
 
 ### ToDo
 
