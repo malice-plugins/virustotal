@@ -22,6 +22,7 @@ RUN apk-install -t .build-deps \
   && echo "Building virustotal Go binary..." \
   && cd /go/src/github.com/maliceio/malice-virustotal \
   && export GOPATH=/go \
+  && export PATH=$GOPATH/bin:/usr/local/go/bin:$PATH \
   && go version \
   && go get \
   && go build -ldflags "-X main.Version=$(cat VERSION) -X main.BuildTime=$(date -u +%Y%m%d)" -o /bin/virustotal \
