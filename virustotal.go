@@ -12,6 +12,7 @@ import (
 	"github.com/maliceio/go-plugin-utils/database/elasticsearch"
 	"github.com/maliceio/go-plugin-utils/utils"
 	"github.com/mitchellh/mapstructure"
+	"github.com/parnurzeal/gorequest"
 	"github.com/urfave/cli"
 )
 
@@ -247,6 +248,10 @@ func printMarkDownTable(virustotal map[string]interface{}) {
 	}
 }
 
+func printStatus(resp gorequest.Response, body string, errs []error) {
+	fmt.Println(body)
+}
+
 var appHelpTemplate = `Usage: {{.Name}} {{if .Flags}}[OPTIONS] {{end}}COMMAND [arg...]
 
 {{.Usage}}
@@ -367,6 +372,18 @@ func main() {
 					} else {
 						vtJSON, err := json.Marshal(vtReport)
 						utils.Assert(err)
+						if c.Bool("post") {
+							request := gorequest.New()
+							if c.Bool("proxy") {
+								request = gorequest.New().Proxy(os.Getenv("MALICE_PROXY"))
+							}
+							request.Post(os.Getenv("MALICE_ENDPOINT")).
+								Set("X-Malice-ID", utils.Getopt("MALICE_SCANID", hash)).
+								Send(string(vtJSON)).
+								End(printStatus)
+
+							return nil
+						}
 						// write to stdout
 						fmt.Println(string(vtJSON))
 					}
