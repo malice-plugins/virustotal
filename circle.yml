@@ -13,7 +13,7 @@ dependencies:
 
 test:
   override:
-    - docker run malice_vt --help
+    - docker run malice_vt --api 2539516d471d7beb6b28a720d7a25024edc0f7590d345fc747418645002ac47b lookup 669f87f2ec48dce3a76386eec94d7e3b
 
 deployment:
   # master:
