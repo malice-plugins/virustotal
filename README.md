@@ -183,6 +183,7 @@ $ docker run -d --name elastic \
                  blacktop/elasticsearch
 $ docker run --rm --link elastic malice/virustotal HASH
 ```
+
 ### Issues
 
 Find a bug? Want more features? Find something missing in the documentation? Let me know! Please don't hesitate to [file an issue](https://github.com/maliceio/malice-virustotal/issues/new) and I'll get right on it.

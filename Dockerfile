@@ -2,8 +2,6 @@ FROM malice/alpine:tini
 
 MAINTAINER blacktop, https://github.com/blacktop
 
-ADD https://raw.githubusercontent.com/maliceio/go-plugin-utils/master/scripts/upgrade-alpine-go.sh /tmp/upgrade-alpine-go.sh
-
 COPY . /go/src/github.com/maliceio/malice-virustotal
 RUN apk-install ca-certificates
 RUN apk-install -t .build-deps \
@@ -17,8 +15,10 @@ RUN apk-install -t .build-deps \
                     gcc \
                     go \
   && set -x \
-  && chmod +x /tmp/upgrade-alpine-go.sh \
-  && ./tmp/upgrade-alpine-go.sh \
+  && cd /tmp \
+  && wget https://raw.githubusercontent.com/maliceio/go-plugin-utils/master/scripts/upgrade-alpine-go.sh \
+  && chmod +x upgrade-alpine-go.sh \
+  && ./upgrade-alpine-go.sh \
   && echo "Building virustotal Go binary..." \
   && cd /go/src/github.com/maliceio/malice-virustotal \
   && export GOPATH=/go \
