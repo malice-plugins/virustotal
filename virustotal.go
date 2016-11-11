@@ -272,8 +272,15 @@ Run '{{.Name}} COMMAND --help' for more information on a command.
 `
 
 func main() {
+
+	var (
+		apikey  string
+		elastic string
+	)
+
 	cli.AppHelpTemplate = appHelpTemplate
 	app := cli.NewApp()
+
 	app.Name = "virustotal"
 	app.Author = "blacktop"
 	app.Email = "https://github.com/blacktop"
@@ -300,16 +307,18 @@ func main() {
 			Usage: "output as Markdown table",
 		},
 		cli.StringFlag{
-			Name:   "api",
-			Value:  "",
-			Usage:  "VirusTotal API key",
-			EnvVar: "MALICE_VT_API",
+			Name:        "api",
+			Value:       "",
+			Usage:       "VirusTotal API key",
+			EnvVar:      "MALICE_VT_API",
+			Destination: &apikey,
 		},
 		cli.StringFlag{
-			Name:   "elasitcsearch",
-			Value:  "",
-			Usage:  "elasitcsearch address for Malice to store results",
-			EnvVar: "MALICE_ELASTICSEARCH",
+			Name:        "elasitcsearch",
+			Value:       "",
+			Usage:       "elasitcsearch address for Malice to store results",
+			EnvVar:      "MALICE_ELASTICSEARCH",
+			Destination: &elastic,
 		},
 	}
 	app.Commands = []cli.Command{
@@ -320,7 +329,7 @@ func main() {
 			ArgsUsage: "FILE to upload to VirusTotal",
 			Action: func(c *cli.Context) error {
 				// Check for valid apikey
-				if c.String("api") == "" {
+				if apikey == "" {
 					log.Fatal(fmt.Errorf("Please supply a valid VT_API key with the flag '--api'."))
 				}
 				if c.Bool("verbose") {
@@ -333,7 +342,7 @@ func main() {
 						utils.Assert(err)
 					}
 					// upload file to virustotal.com
-					scanFile(path, c.String("api"))
+					scanFile(path, apikey)
 				} else {
 					log.Fatal(fmt.Errorf("Please supply a file to upload to VirusTotal."))
 				}
@@ -347,7 +356,7 @@ func main() {
 			ArgsUsage: "MD5/SHA1/SHA256 hash of file",
 			Action: func(c *cli.Context) error {
 				// Check for valid apikey
-				if c.String("api") == "" {
+				if apikey == "" {
 					log.Fatal(fmt.Errorf("Please supply a valid VT_API key with the flag '--api'."))
 				}
 				if c.Bool("verbose") {
@@ -356,10 +365,10 @@ func main() {
 
 				if c.Args().Present() {
 					hash := c.Args().First()
-					vtReport := lookupHash(hash, c.String("api"))
+					vtReport := lookupHash(hash, apikey)
 
 					// upsert into Database
-					elasticsearch.InitElasticSearch(c.String("elasitcsearch"))
+					elasticsearch.InitElasticSearch(elastic)
 					elasticsearch.WritePluginResultsToDatabase(elasticsearch.PluginResults{
 						ID:       utils.Getopt("MALICE_SCANID", hash),
 						Name:     name,
