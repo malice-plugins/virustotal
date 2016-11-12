@@ -8,7 +8,9 @@ dev:
 
 build:
 	docker build -t malice/$(NAME):$(VERSION) .
-	sed -i.bu 's/docker image-.*-blue/docker image-$(shell docker images --format "{{.Size}}" malice/$(NAME):$(VERSION))-blue/g' README.md
+
+size:
+		sed -i.bu 's/docker image-.*-blue/docker image-$(shell docker images --format "{{.Size}}" malice/$(NAME):$(VERSION))-blue/g' README.md
 
 release:
 	rm -rf release && mkdir release

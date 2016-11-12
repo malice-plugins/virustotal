@@ -257,6 +257,10 @@ func main() {
 	var (
 		apikey  string
 		elastic string
+		table   bool
+		post    bool
+		proxy   bool
+		verbose bool
 	)
 
 	cli.AppHelpTemplate = utils.AppHelpTemplate
@@ -270,22 +274,26 @@ func main() {
 	app.Usage = "Malice VirusTotal Plugin"
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
-			Name:  "verbose, V",
-			Usage: "verbose output",
+			Name:        "verbose, V",
+			Usage:       "verbose output",
+			Destination: &verbose,
 		},
 		cli.BoolFlag{
-			Name:   "post, p",
-			Usage:  "POST results to Malice webhook",
-			EnvVar: "MALICE_ENDPOINT",
+			Name:        "post, p",
+			Usage:       "POST results to Malice webhook",
+			EnvVar:      "MALICE_ENDPOINT",
+			Destination: &post,
 		},
 		cli.BoolFlag{
-			Name:   "proxy, x",
-			Usage:  "proxy settings for Malice webhook endpoint",
-			EnvVar: "MALICE_PROXY",
+			Name:        "proxy, x",
+			Usage:       "proxy settings for Malice webhook endpoint",
+			EnvVar:      "MALICE_PROXY",
+			Destination: &proxy,
 		},
 		cli.BoolFlag{
-			Name:  "table, t",
-			Usage: "output as Markdown table",
+			Name:        "table, t",
+			Usage:       "output as Markdown table",
+			Destination: &table,
 		},
 		cli.StringFlag{
 			Name:        "api",
@@ -313,7 +321,7 @@ func main() {
 				if apikey == "" {
 					log.Fatal(fmt.Errorf("Please supply a valid VT_API key with the flag '--api'."))
 				}
-				if c.Bool("verbose") {
+				if verbose {
 					log.SetLevel(log.DebugLevel)
 				}
 				if c.Args().Present() {
@@ -340,7 +348,7 @@ func main() {
 				if apikey == "" {
 					log.Fatal(fmt.Errorf("Please supply a valid VT_API key with the flag '--api'."))
 				}
-				if c.Bool("verbose") {
+				if verbose {
 					log.SetLevel(log.DebugLevel)
 				}
 
@@ -356,15 +364,14 @@ func main() {
 						Category: category,
 						Data:     vtReport,
 					})
-
-					if c.Bool("table") {
+					if table {
 						printMarkDownTable(vtReport)
 					} else {
 						vtJSON, err := json.Marshal(vtReport)
 						utils.Assert(err)
-						if c.Bool("post") {
+						if post {
 							request := gorequest.New()
-							if c.Bool("proxy") {
+							if proxy {
 								request = gorequest.New().Proxy(os.Getenv("MALICE_PROXY"))
 							}
 							request.Post(os.Getenv("MALICE_ENDPOINT")).
