@@ -364,11 +364,13 @@ func main() {
 						Category: category,
 						Data:     vtReport,
 					})
+
 					if table {
 						printMarkDownTable(vtReport)
 					} else {
 						vtJSON, err := json.Marshal(vtReport)
 						utils.Assert(err)
+
 						if post {
 							request := gorequest.New()
 							if proxy {
