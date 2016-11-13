@@ -257,10 +257,6 @@ func main() {
 	var (
 		apikey  string
 		elastic string
-		table   bool
-		post    bool
-		proxy   bool
-		verbose bool
 	)
 
 	cli.AppHelpTemplate = utils.AppHelpTemplate
@@ -274,26 +270,22 @@ func main() {
 	app.Usage = "Malice VirusTotal Plugin"
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
-			Name:        "verbose, V",
-			Usage:       "verbose output",
-			Destination: &verbose,
+			Name:  "verbose, V",
+			Usage: "verbose output",
 		},
 		cli.BoolFlag{
-			Name:        "post, p",
-			Usage:       "POST results to Malice webhook",
-			EnvVar:      "MALICE_ENDPOINT",
-			Destination: &post,
+			Name:   "post, p",
+			Usage:  "POST results to Malice webhook",
+			EnvVar: "MALICE_ENDPOINT",
 		},
 		cli.BoolFlag{
-			Name:        "proxy, x",
-			Usage:       "proxy settings for Malice webhook endpoint",
-			EnvVar:      "MALICE_PROXY",
-			Destination: &proxy,
+			Name:   "proxy, x",
+			Usage:  "proxy settings for Malice webhook endpoint",
+			EnvVar: "MALICE_PROXY",
 		},
 		cli.BoolFlag{
-			Name:        "table, t",
-			Usage:       "output as Markdown table",
-			Destination: &table,
+			Name:  "table, t",
+			Usage: "output as Markdown table",
 		},
 		cli.StringFlag{
 			Name:        "api",
@@ -321,7 +313,7 @@ func main() {
 				if apikey == "" {
 					log.Fatal(fmt.Errorf("Please supply a valid VT_API key with the flag '--api'."))
 				}
-				if verbose {
+				if c.GlobalBool("verbose") {
 					log.SetLevel(log.DebugLevel)
 				}
 				if c.Args().Present() {
@@ -344,11 +336,12 @@ func main() {
 			Usage:     "Get file hash scan report",
 			ArgsUsage: "MD5/SHA1/SHA256 hash of file",
 			Action: func(c *cli.Context) error {
+				fmt.Println(c.GlobalBool("table"))
 				// Check for valid apikey
 				if apikey == "" {
 					log.Fatal(fmt.Errorf("Please supply a valid VT_API key with the flag '--api'."))
 				}
-				if verbose {
+				if c.GlobalBool("verbose") {
 					log.SetLevel(log.DebugLevel)
 				}
 
@@ -365,15 +358,15 @@ func main() {
 						Data:     vtReport,
 					})
 
-					if table {
+					if c.GlobalBool("table") {
 						printMarkDownTable(vtReport)
 					} else {
 						vtJSON, err := json.Marshal(vtReport)
 						utils.Assert(err)
 
-						if post {
+						if c.GlobalBool("post") {
 							request := gorequest.New()
-							if proxy {
+							if c.GlobalBool("proxy") {
 								request = gorequest.New().Proxy(os.Getenv("MALICE_PROXY"))
 							}
 							request.Post(os.Getenv("MALICE_ENDPOINT")).
