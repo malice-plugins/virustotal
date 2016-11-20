@@ -336,7 +336,6 @@ func main() {
 			Usage:     "Get file hash scan report",
 			ArgsUsage: "MD5/SHA1/SHA256 hash of file",
 			Action: func(c *cli.Context) error {
-				fmt.Println(c.GlobalBool("table"))
 				// Check for valid apikey
 				if apikey == "" {
 					log.Fatal(fmt.Errorf("Please supply a valid VT_API key with the flag '--api'."))
