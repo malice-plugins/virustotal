@@ -1,4 +1,4 @@
-FROM malice/alpine:tini
+FROM malice/alpine
 
 MAINTAINER blacktop, https://github.com/blacktop
 
@@ -31,6 +31,6 @@ RUN apk-install -t .build-deps \
 
 WORKDIR /malware
 
-ENTRYPOINT ["gosu","malice","/sbin/tini","--","virustotal"]
+ENTRYPOINT ["su-exec","malice","/sbin/tini","--","virustotal"]
 
 CMD ["--help"]
