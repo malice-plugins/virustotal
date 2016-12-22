@@ -311,7 +311,7 @@ func main() {
 			Action: func(c *cli.Context) error {
 				// Check for valid apikey
 				if apikey == "" {
-					log.Fatal(fmt.Errorf("Please supply a valid VT_API key with the flag '--api'."))
+					log.Fatal(fmt.Errorf("Please supply a valid MALICE_VT_API key with the flag '--api'."))
 				}
 				if c.GlobalBool("verbose") {
 					log.SetLevel(log.DebugLevel)
@@ -338,7 +338,7 @@ func main() {
 			Action: func(c *cli.Context) error {
 				// Check for valid apikey
 				if apikey == "" {
-					log.Fatal(fmt.Errorf("Please supply a valid VT_API key with the flag '--api'."))
+					log.Fatal(fmt.Errorf("Please supply a valid MALICE_VT_API key with the flag '--api'."))
 				}
 				if c.GlobalBool("verbose") {
 					log.SetLevel(log.DebugLevel)
