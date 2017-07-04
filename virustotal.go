@@ -1,13 +1,14 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"os"
 	"time"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/crackcomm/go-clitable"
 	"github.com/levigross/grequests"
 	"github.com/maliceio/go-plugin-utils/database/elasticsearch"
 	"github.com/maliceio/go-plugin-utils/utils"
@@ -53,10 +54,12 @@ type ResultsData struct {
 	Positives    int             `json:"positives"`
 	ScanID       string          `json:"scan_id" mapstructure:"scan_id"`
 	ScanDate     string          `json:"scan_date" mapstructure:"scan_date"`
+	FirstSeen    string          `json:"first_seen" mapstructure:"first_seen"`
 	VerboseMsg   string          `json:"verbose_msg" mapstructure:"verbose_msg"`
 	MD5          string          `json:"md5"`
 	Sha1         string          `json:"sha1"`
 	Sha256       string          `json:"sha256"`
+	Ratio        string          `json:"ratio"`
 }
 
 // Scan is a VirusTotal AV scan JSON object
@@ -225,27 +228,24 @@ func shortenPermalink(longURL string) string {
 	return btl.Data.URL
 }
 
-func printMarkDownTable(virustotal map[string]interface{}) {
-
+func generateMarkDownTable(virustotal map[string]interface{}) string {
+	var tplOut bytes.Buffer
 	var vt ResultsData
+
 	err := mapstructure.Decode(virustotal, &vt)
 	utils.Assert(err)
 
-	fmt.Println("#### VirusTotal")
-	if vt.ResponseCode == 0 {
-		fmt.Println(" - Not found")
-	} else {
-		table := clitable.New([]string{"Ratio", "Link", "API", "Scanned"})
-		table.AddRow(map[string]interface{}{
-			"Ratio": getRatio(vt.Positives, vt.Total),
-			"Link":  fmt.Sprintf("[link](%s)", vt.Permalink),
-			"API":   "Public",
-			// "API":     vt.ApiType,
-			"Scanned": vt.ScanDate,
-		})
-		table.Markdown = true
-		table.Print()
+	// calculate ratio
+	vt.Ratio = getRatio(vt.Positives, vt.Total)
+
+	t := template.Must(template.New("vt").Parse(tpl))
+
+	err = t.Execute(&tplOut, vt)
+	if err != nil {
+		log.Println("executing template:", err)
 	}
+
+	return tplOut.String()
 }
 
 func printStatus(resp gorequest.Response, body string, errs []error) {
@@ -311,7 +311,7 @@ func main() {
 			Action: func(c *cli.Context) error {
 				// Check for valid apikey
 				if apikey == "" {
-					log.Fatal(fmt.Errorf("Please supply a valid MALICE_VT_API key with the flag '--api'."))
+					log.Fatal(fmt.Errorf("please supply a valid MALICE_VT_API key with the flag '--api'"))
 				}
 				if c.GlobalBool("verbose") {
 					log.SetLevel(log.DebugLevel)
@@ -325,7 +325,7 @@ func main() {
 					// upload file to virustotal.com
 					scanFile(path, apikey)
 				} else {
-					log.Fatal(fmt.Errorf("Please supply a file to upload to VirusTotal."))
+					log.Fatal(fmt.Errorf("please supply a file to upload to virustotal.com"))
 				}
 				return nil
 			},
@@ -338,7 +338,7 @@ func main() {
 			Action: func(c *cli.Context) error {
 				// Check for valid apikey
 				if apikey == "" {
-					log.Fatal(fmt.Errorf("Please supply a valid MALICE_VT_API key with the flag '--api'."))
+					log.Fatal(fmt.Errorf("please supply a valid MALICE_VT_API key with the flag '--api'"))
 				}
 				if c.GlobalBool("verbose") {
 					log.SetLevel(log.DebugLevel)
@@ -347,6 +347,7 @@ func main() {
 				if c.Args().Present() {
 					hash := c.Args().First()
 					vtReport := lookupHash(hash, apikey)
+					vtReport["markdown"] = generateMarkDownTable(vtReport)
 
 					// upsert into Database
 					elasticsearch.InitElasticSearch(elastic)
@@ -358,7 +359,7 @@ func main() {
 					})
 
 					if c.GlobalBool("table") {
-						printMarkDownTable(vtReport)
+						fmt.Println(vtReport["markdown"])
 					} else {
 						vtJSON, err := json.Marshal(vtReport)
 						utils.Assert(err)
@@ -379,7 +380,7 @@ func main() {
 						fmt.Println(string(vtJSON))
 					}
 				} else {
-					log.Fatal(fmt.Errorf("Please supply a MD5/SHA1/SHA256 hash to query."))
+					log.Fatal(fmt.Errorf("please supply a MD5/SHA1/SHA256 hash to query"))
 				}
 				return nil
 			},

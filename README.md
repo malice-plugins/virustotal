@@ -3,13 +3,11 @@
 malice-virustotal
 =================
 
-[![Circle CI](https://circleci.com/gh/maliceio/malice-virustotal.png?style=shield)](https://circleci.com/gh/maliceio/malice-virustotal) [![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org) [![Docker Stars](https://img.shields.io/docker/stars/malice/virustotal.svg)](https://hub.docker.com/r/malice/virustotal/) [![Docker Pulls](https://img.shields.io/docker/pulls/malice/virustotal.svg)](https://hub.docker.com/r/malice/virustotal/) [![Docker Image](https://img.shields.io/badge/docker image-20.9 MB-blue.svg)](https://hub.docker.com/r/malice/virustotal/)
+[![Circle CI](https://circleci.com/gh/maliceio/malice-virustotal.png?style=shield)](https://circleci.com/gh/maliceio/malice-virustotal) [![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org) [![Docker Stars](https://img.shields.io/docker/stars/malice/virustotal.svg)](https://hub.docker.com/r/malice/virustotal/) [![Docker Pulls](https://img.shields.io/docker/pulls/malice/virustotal.svg)](https://hub.docker.com/r/malice/virustotal/) [![Docker Image](https://img.shields.io/badge/docker image-21.8MB-blue.svg)](https://hub.docker.com/r/malice/virustotal/)
 
 Malice VirusTotal Plugin
 
 This repository contains a **Dockerfile** of the [VirusTotal](https://virustotal.com) malice plugin **malice/virustotal**.
-
-> *NOTE:* Currently only supports Public API
 
 ### Dependencies
 
@@ -158,7 +156,7 @@ Sample Output
 }
 ```
 
-### STDOUT (Markdown Table):
+### Markdown:
 
 ---
 
@@ -177,11 +175,11 @@ Documentation
 
 ```bash
 $ docker volume create --name malice
-$ docker run -d --name elastic \
+$ docker run -d --name elasticsearch \
                 -p 9200:9200 \
                 -v malice:/usr/share/elasticsearch/data \
                  blacktop/elasticsearch
-$ docker run --rm --link elastic malice/virustotal HASH
+$ docker run --rm --link elasticsearch malice/virustotal HASH
 ```
 
 ### Issues
@@ -197,11 +195,6 @@ See [`CHANGELOG.md`](https://github.com/maliceio/malice-virustotal/blob/master/C
 [See all contributors on GitHub](https://github.com/maliceio/malice-virustotal/graphs/contributors).
 
 Please update the [CHANGELOG.md](https://github.com/maliceio/malice-virustotal/blob/master/CHANGELOG.md) and submit a [Pull Request on GitHub](https://help.github.com/articles/using-pull-requests/).
-
-### ToDo
-
--	[ ] Add docs like [registrator](http://gliderlabs.com/registrator/latest/#getting-registrator)
--	[x] Break out common plugin components into a golang package
 
 ### License
 
