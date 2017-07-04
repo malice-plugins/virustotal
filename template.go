@@ -2,13 +2,13 @@ package main
 
 // escaped data
 const tpl = `#### VirusTotal
-{{- if .ResponseCode}}
-| Ratio      | Link  | API      | Scanned        |
+{{- if eq .ResponseCode 1 }}
+| Ratio      | Link         | API         | Scanned     |
 |------------|--------------|-------------|-------------|
 | {{.Ratio}} | [link]({{.Permalink}}) | {{if .FirstSeen}}Private{{else}}Public{{end}} | {{.ScanDate}} |
-{{else}}
+{{- else }}
 - Not found
-{{end}}
+{{- end }}
 `
 
 // var vt ResultsData

@@ -59,11 +59,7 @@ jobs:
           name: Run tests
           command: |
             set -x
-            curl -L -o /tmp/sample https://github.com/maliceio/malice-av/raw/master/samples/befb88b89c2eb401900a68e9f5b78764203f2b48264fcc3f7121bf04a57fd408
-            docker create -v /malware --name malvol alpine:3.6 /bin/true
-            docker cp /tmp/sample malvol:/malware
-            docker run --rm --volumes-from malvol app -V sample | jq .
-            docker run --rm --volumes-from malvol app -t sample
+            docker run --rm app -V --api 2539516d471d7beb6b28a720d7a25024edc0f7590d345fc747418645002ac47b lookup 669f87f2ec48dce3a76386eec94d7e3b | jq .markdown
       # - run:
       #     name: Review results
       #     command: |
