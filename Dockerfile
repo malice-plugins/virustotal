@@ -1,6 +1,11 @@
 FROM malice/alpine
 
-MAINTAINER blacktop, https://github.com/blacktop
+LABEL maintainer "https://github.com/blacktop"
+
+LABEL malice.plugin.repository = "https://github.com/malice-plugins/shadow-server.git"
+LABEL malice.plugin.category="intel"
+LABEL malice.plugin.mime="hash"
+LABEL malice.plugin.docker.engine="*"
 
 COPY . /go/src/github.com/maliceio/malice-virustotal
 RUN apk --update add --no-cache ca-certificates
