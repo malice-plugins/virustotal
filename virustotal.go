@@ -14,7 +14,7 @@ import (
 	"github.com/maliceio/go-plugin-utils/utils"
 	"github.com/mitchellh/mapstructure"
 	"github.com/parnurzeal/gorequest"
-	"github.com/urfave/cli"
+	"gopkg.in/urfave/cli.v1"
 )
 
 // Version stores the plugin's version
@@ -273,34 +273,6 @@ func main() {
 			Name:  "verbose, V",
 			Usage: "verbose output",
 		},
-		cli.BoolFlag{
-			Name:   "post, p",
-			Usage:  "POST results to Malice webhook",
-			EnvVar: "MALICE_ENDPOINT",
-		},
-		cli.BoolFlag{
-			Name:   "proxy, x",
-			Usage:  "proxy settings for Malice webhook endpoint",
-			EnvVar: "MALICE_PROXY",
-		},
-		cli.BoolFlag{
-			Name:  "table, t",
-			Usage: "output as Markdown table",
-		},
-		cli.StringFlag{
-			Name:        "api",
-			Value:       "",
-			Usage:       "VirusTotal API key",
-			EnvVar:      "MALICE_VT_API",
-			Destination: &apikey,
-		},
-		cli.StringFlag{
-			Name:        "elasitcsearch",
-			Value:       "",
-			Usage:       "elasitcsearch address for Malice to store results",
-			EnvVar:      "MALICE_ELASTICSEARCH",
-			Destination: &elastic,
-		},
 	}
 	app.Commands = []cli.Command{
 		{
@@ -335,6 +307,36 @@ func main() {
 			Aliases:   []string{"l"},
 			Usage:     "Get file hash scan report",
 			ArgsUsage: "MD5/SHA1/SHA256 hash of file",
+			Flags: cli.Flag{
+				cli.BoolFlag{
+					Name:   "post, p",
+					Usage:  "POST results to Malice webhook",
+					EnvVar: "MALICE_ENDPOINT",
+				},
+				cli.BoolFlag{
+					Name:   "proxy, x",
+					Usage:  "proxy settings for Malice webhook endpoint",
+					EnvVar: "MALICE_PROXY",
+				},
+				cli.BoolFlag{
+					Name:  "table, t",
+					Usage: "output as Markdown table",
+				},
+				cli.StringFlag{
+					Name:        "api",
+					Value:       "",
+					Usage:       "VirusTotal API key",
+					EnvVar:      "MALICE_VT_API",
+					Destination: &apikey,
+				},
+				cli.StringFlag{
+					Name:        "elasitcsearch",
+					Value:       "",
+					Usage:       "elasitcsearch address for Malice to store results",
+					EnvVar:      "MALICE_ELASTICSEARCH",
+					Destination: &elastic,
+				},
+			},
 			Action: func(c *cli.Context) error {
 				// Check for valid apikey
 				if apikey == "" {

@@ -1,7 +1,6 @@
 ![VT logo](https://raw.githubusercontent.com/maliceio/malice-virustotal/master/logo.png)
 
-malice-virustotal
-=================
+# malice-virustotal
 
 [![Circle CI](https://circleci.com/gh/malice-plugins/virustotal.png?style=shield)](https://circleci.com/gh/malice-plugins/virustotal) [![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org) [![Docker Stars](https://img.shields.io/docker/stars/malice/virustotal.svg)](https://hub.docker.com/r/malice/virustotal/) [![Docker Pulls](https://img.shields.io/docker/pulls/malice/virustotal.svg)](https://hub.docker.com/r/malice/virustotal/) [![Docker Image](https://img.shields.io/badge/docker%20image-21.8MB-blue.svg)](https://hub.docker.com/r/malice/virustotal/)
 
@@ -11,12 +10,12 @@ This repository contains a **Dockerfile** of the [VirusTotal](https://virustotal
 
 ### Dependencies
 
--	[malice/alpine](https://hub.docker.com/r/malice/alpine/)
+- [malice/alpine](https://hub.docker.com/r/malice/alpine/)
 
 ### Installation
 
-1.	Install [Docker](https://www.docker.io/).
-2.	Download [trusted build](https://hub.docker.com/r/malice/virustotal/) from public [DockerHub](https://hub.docker.com): `docker pull malice/virustotal`
+1.  Install [Docker](https://www.docker.io/).
+2.  Download [trusted build](https://hub.docker.com/r/malice/virustotal/) from public [DockerHub](https://hub.docker.com): `docker pull malice/virustotal`
 
 ### Usage
 
@@ -52,8 +51,7 @@ Commands:
 Run 'virustotal COMMAND --help' for more information on a command.
 ```
 
-Sample Output
--------------
+## Sample Output
 
 ### JSON:
 
@@ -163,13 +161,12 @@ Sample Output
 #### virustotal
 
 | Ratio | Link                          | API    | Scanned                |
-|-------|-------------------------------|--------|------------------------|
+| ----- | ----------------------------- | ------ | ---------------------- |
 | 85%   | [link](http://bit.ly/1ThieJ6) | Public | Sun 2016Feb14 14:00:50 |
 
 ---
 
-Documentation
--------------
+## Documentation
 
 ### To write results to [ElasticSearch](https://www.elastic.co/products/elasticsearch)
 
@@ -198,4 +195,4 @@ Please update the [CHANGELOG.md](https://github.com/maliceio/malice-virustotal/b
 
 ### License
 
-MIT Copyright (c) 2015-2017 **blacktop**
+MIT Copyright (c) 2015-2018 **blacktop**
