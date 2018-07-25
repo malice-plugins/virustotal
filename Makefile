@@ -19,9 +19,9 @@ test: check-env
 	@docker run --rm $(ORG)/$(NAME):$(VERSION) -V --api ${MALICE_VT_API} lookup 669f87f2ec48dce3a76386eec94d7e3b | jq . > docs/results.json
 	cat docs/results.json | jq .
 	@echo "===> Test lookup found"
-	@docker run --rm $(ORG)/$(NAME):$(VERSION) --api ${MALICE_VT_API} -t lookup 669f87f2ec48dce3a76386eec94d7e3b | tee docs/SAMPLE.md
+	@docker run --rm $(ORG)/$(NAME):$(VERSION) --api ${MALICE_VT_API} lookup -t 669f87f2ec48dce3a76386eec94d7e3b | tee docs/SAMPLE.md
 	@echo "===> Test lookup not found"
-	@docker run --rm $(ORG)/$(NAME):$(VERSION) --api ${MALICE_VT_API} -t lookup 669f87f2ec48dce3a76386eec94d7ecc | tee -a docs/SAMPLE.md
+	@docker run --rm $(ORG)/$(NAME):$(VERSION) --api ${MALICE_VT_API} lookup -t 669f87f2ec48dce3a76386eec94d7ecc | tee -a docs/NOT_FOUND_SAMPLE.md
 
 check-env:
 ifndef MALICE_VT_API

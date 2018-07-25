@@ -273,6 +273,13 @@ func main() {
 			Name:  "verbose, V",
 			Usage: "verbose output",
 		},
+		cli.StringFlag{
+			Name:        "api",
+			Value:       "",
+			Usage:       "VirusTotal API key",
+			EnvVar:      "MALICE_VT_API",
+			Destination: &apikey,
+		},
 	}
 	app.Commands = []cli.Command{
 		{
@@ -307,7 +314,7 @@ func main() {
 			Aliases:   []string{"l"},
 			Usage:     "Get file hash scan report",
 			ArgsUsage: "MD5/SHA1/SHA256 hash of file",
-			Flags: cli.Flag{
+			Flags: []cli.Flag{
 				cli.BoolFlag{
 					Name:   "post, p",
 					Usage:  "POST results to Malice webhook",
@@ -321,13 +328,6 @@ func main() {
 				cli.BoolFlag{
 					Name:  "table, t",
 					Usage: "output as Markdown table",
-				},
-				cli.StringFlag{
-					Name:        "api",
-					Value:       "",
-					Usage:       "VirusTotal API key",
-					EnvVar:      "MALICE_VT_API",
-					Destination: &apikey,
 				},
 				cli.StringFlag{
 					Name:        "elasitcsearch",
@@ -360,15 +360,15 @@ func main() {
 						Data:     vtReport,
 					})
 
-					if c.GlobalBool("table") {
+					if c.Bool("table") {
 						fmt.Println(vtReport["markdown"])
 					} else {
 						vtJSON, err := json.Marshal(vtReport)
 						utils.Assert(err)
 
-						if c.GlobalBool("post") {
+						if c.Bool("post") {
 							request := gorequest.New()
-							if c.GlobalBool("proxy") {
+							if c.Bool("proxy") {
 								request = gorequest.New().Proxy(os.Getenv("MALICE_PROXY"))
 							}
 							request.Post(os.Getenv("MALICE_ENDPOINT")).
