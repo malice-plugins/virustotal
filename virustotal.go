@@ -10,10 +10,12 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/levigross/grequests"
+	"github.com/malice-plugins/go-plugin-utils/database"
 	"github.com/maliceio/go-plugin-utils/database/elasticsearch"
 	"github.com/maliceio/go-plugin-utils/utils"
 	"github.com/mitchellh/mapstructure"
 	"github.com/parnurzeal/gorequest"
+	"github.com/pkg/errors"
 	"gopkg.in/urfave/cli.v1"
 )
 
@@ -255,8 +257,8 @@ func printStatus(resp gorequest.Response, body string, errs []error) {
 func main() {
 
 	var (
-		apikey  string
-		elastic string
+		apikey string
+		es     elasticsearch.Database
 	)
 
 	cli.AppHelpTemplate = utils.AppHelpTemplate
@@ -334,7 +336,7 @@ func main() {
 					Value:       "",
 					Usage:       "elasitcsearch address for Malice to store results",
 					EnvVar:      "MALICE_ELASTICSEARCH",
-					Destination: &elastic,
+					Destination: &es.Host,
 				},
 			},
 			Action: func(c *cli.Context) error {
@@ -352,13 +354,21 @@ func main() {
 					vtReport["markdown"] = generateMarkDownTable(vtReport)
 
 					// upsert into Database
-					elasticsearch.InitElasticSearch(elastic)
-					elasticsearch.WritePluginResultsToDatabase(elasticsearch.PluginResults{
-						ID:       utils.Getopt("MALICE_SCANID", hash),
-						Name:     name,
-						Category: category,
-						Data:     vtReport,
-					})
+					if len(c.String("elasitcsearch")) > 0 {
+						err := es.Init()
+						if err != nil {
+							return errors.Wrap(err, "failed to initalize elasitcsearch")
+						}
+						err = es.StorePluginResults(database.PluginResults{
+							ID:       utils.Getopt("MALICE_SCANID", hash),
+							Name:     name,
+							Category: category,
+							Data:     vtReport,
+						})
+						if err != nil {
+							return errors.Wrapf(err, "failed to index malice/%s results", name)
+						}
+					}
 
 					if c.Bool("table") {
 						fmt.Println(vtReport["markdown"])

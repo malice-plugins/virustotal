@@ -3,13 +3,17 @@ ORG=malice
 NAME=virustotal
 VERSION=$(shell cat VERSION)
 
-all: build size test
+all: build size tag test
 
 build:
 	docker build -t $(ORG)/$(NAME):$(VERSION) .
 
 size:
 	sed -i.bu 's/docker image-.*-blue/docker image-$(shell docker images --format "{{.Size}}" $(ORG)/$(NAME):$(VERSION))-blue/' README.md
+
+.PHONY: tag
+tag:
+	docker tag $(ORG)/$(NAME):$(VERSION) $(ORG)/$(NAME):latest
 
 tags:
 	docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}" $(ORG)/$(NAME)
