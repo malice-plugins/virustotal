@@ -1,6 +1,7 @@
 REPO=malice-plugins/virustotal
 ORG=malice
 NAME=virustotal
+CATEGORY=intel
 VERSION=$(shell cat VERSION)
 
 
@@ -58,21 +59,23 @@ test: check_env
 	@echo "===> Test lookup found"
 	@docker run --rm $(ORG)/$(NAME):$(VERSION) -V --api ${MALICE_VT_API} lookup 669f87f2ec48dce3a76386eec94d7e3b | jq . > docs/results.json
 	cat docs/results.json | jq .
-	@echo "===> Test lookup found"
+	@echo "===> Test lookup NOT found"
 	@docker run --rm $(ORG)/$(NAME):$(VERSION) -V --api ${MALICE_VT_API} lookup 669f87f2ec48dce3a76386eec94d7ecc | jq . > docs/no_results.json
 	cat docs/no_results.json | jq .
 
 .PHONY: test_elastic
 test_elastic: start_elasticsearch
-	@echo "===> ${NAME} test_elastic"
+	@echo "===> ${NAME} test_elastic found"
 	docker run --rm --link elasticsearch -e MALICE_ELASTICSEARCH=elasticsearch $(ORG)/$(NAME):$(VERSION) -V --api ${MALICE_VT_API} lookup 669f87f2ec48dce3a76386eec94d7e3b
+	@echo "===> ${NAME} test_elastic NOT found"
+	docker run --rm --link elasticsearch -e MALICE_ELASTICSEARCH=elasticsearch $(ORG)/$(NAME):$(VERSION) -V --api ${MALICE_VT_API} lookup 669f87f2ec48dce3a76386eec94d7ecc
 	http localhost:9200/malice/_search | jq . > docs/elastic.json
 
 .PHONY: test_markdown
 test_markdown: test_elastic
 	@echo "===> ${NAME} test_elastic"
 	http localhost:9200/malice/_search | jq . > docs/elastic.json
-	cat docs/elastic.json | jq -r '.hits.hits[] ._source.plugins.av.${NAME}.markdown' > docs/SAMPLE.md
+	cat docs/elastic.json | jq -r '.hits.hits[] ._source.plugins.${CATEGORY}.${NAME}.markdown' > docs/SAMPLE.md
 
 .PHONY: circle
 circle: ci-size
