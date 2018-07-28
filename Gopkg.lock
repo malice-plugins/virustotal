@@ -40,22 +40,15 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:86240a19b39e661eaf6fe0f4e5d1b687d26be4a35a3f73a6649fe0813e24c6fc"
+  digest = "1:525dab0e1b29b34a5fb31695c41c004b7ce9ca83cf9c9247417236a7ddb37e98"
   name = "github.com/malice-plugins/go-plugin-utils"
-  packages = ["database"]
-  pruneopts = "UT"
-  revision = "4aca82f951321de6f99b51717f248deb9851ee0d"
-
-[[projects]]
-  branch = "master"
-  digest = "1:e8f9ccb874c1d7fd26552b07aaee7e1f9ec2003b9d96528301424b137a2a9897"
-  name = "github.com/maliceio/go-plugin-utils"
   packages = [
+    "database",
     "database/elasticsearch",
     "utils",
   ]
   pruneopts = "UT"
-  revision = "4aca82f951321de6f99b51717f248deb9851ee0d"
+  revision = "7663d6b3aa7fe4667f78de3e5ea8951566817682"
 
 [[projects]]
   branch = "master"
@@ -169,8 +162,8 @@
     "github.com/Sirupsen/logrus",
     "github.com/levigross/grequests",
     "github.com/malice-plugins/go-plugin-utils/database",
-    "github.com/maliceio/go-plugin-utils/database/elasticsearch",
-    "github.com/maliceio/go-plugin-utils/utils",
+    "github.com/malice-plugins/go-plugin-utils/database/elasticsearch",
+    "github.com/malice-plugins/go-plugin-utils/utils",
     "github.com/mitchellh/mapstructure",
     "github.com/parnurzeal/gorequest",
     "github.com/pkg/errors",

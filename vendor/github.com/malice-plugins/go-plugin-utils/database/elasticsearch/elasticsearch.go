@@ -9,7 +9,7 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/malice-plugins/go-plugin-utils/database"
-	"github.com/maliceio/go-plugin-utils/utils"
+	"github.com/malice-plugins/go-plugin-utils/utils"
 	"github.com/olivere/elastic"
 	"github.com/pkg/errors"
 )
@@ -294,7 +294,8 @@ func (db *Database) StorePluginResults(results database.PluginResults) error {
 		Type(db.Type).
 		Id(results.ID).
 		Do(context.Background())
-	if err != nil {
+	// ignore 404 not found error
+	if err != nil && !elastic.IsNotFound(err) {
 		return errors.Wrapf(err, "failed to get sample with id: %s", results.ID)
 	}
 

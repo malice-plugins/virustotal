@@ -38,12 +38,16 @@ endif
 
 .PHONY: start_elasticsearch
 start_elasticsearch:
-
-.PHONY: gotest
-gotest: check_env
+ifeq ("$(shell docker inspect -f {{.State.Running}} elasticsearch)", "true")
+	@echo "===> elasticsearch already running"
+else
 	@echo "===> Starting elasticsearch"
 	@docker rm -f elasticsearch || true
 	@docker run --init -d --name elasticsearch -p 9200:9200 malice/elasticsearch:6.3; sleep 10
+endif
+
+.PHONY: gotest
+gotest: check_env start_elasticsearch
 	@echo "===> ${NAME} gotest"
 	@MALICE_ELASTICSEARCH=localhost go run *.go -V --api ${MALICE_VT_API} lookup 669f87f2ec48dce3a76386eec94d7e3b
 
@@ -59,10 +63,7 @@ test: check_env
 	cat docs/no_results.json | jq .
 
 .PHONY: test_elastic
-test_elastic:
-	@echo "===> Starting elasticsearch"
-	@docker rm -f elasticsearch || true
-	@docker run --init -d --name elasticsearch -p 9200:9200 malice/elasticsearch:6.3; sleep 10
+test_elastic: start_elasticsearch
 	@echo "===> ${NAME} test_elastic"
 	docker run --rm --link elasticsearch -e MALICE_ELASTICSEARCH=elasticsearch $(ORG)/$(NAME):$(VERSION) -V --api ${MALICE_VT_API} lookup 669f87f2ec48dce3a76386eec94d7e3b
 	http localhost:9200/malice/_search | jq . > docs/elastic.json

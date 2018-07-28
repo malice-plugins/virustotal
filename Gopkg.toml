@@ -39,10 +39,6 @@
 
 [[constraint]]
   branch = "master"
-  name = "github.com/maliceio/go-plugin-utils"
-
-[[constraint]]
-  branch = "master"
   name = "github.com/mitchellh/mapstructure"
 
 [[constraint]]
