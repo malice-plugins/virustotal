@@ -256,10 +256,9 @@ func printStatus(resp gorequest.Response, body string, errs []error) {
 
 func main() {
 
-	var (
-		apikey string
-		es     elasticsearch.Database
-	)
+	var apikey string
+
+	es := elasticsearch.Database{Index: "malice", Type: "samples"}
 
 	cli.AppHelpTemplate = utils.AppHelpTemplate
 	app := cli.NewApp()

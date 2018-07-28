@@ -3,6 +3,9 @@ ORG=malice
 NAME=virustotal
 VERSION=$(shell cat VERSION)
 
+
+all: build size tag test test_markdown
+
 .PHONY: build
 build:
 	cd $(VERSION); docker build -t $(ORG)/$(NAME):$(VERSION) .
