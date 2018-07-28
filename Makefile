@@ -36,6 +36,17 @@ ifndef MALICE_VT_API
     export MALICE_VT_API=2539516d471d7beb6b28a720d7a25024edc0f7590d345fc747418645002ac47b
 endif
 
+.PHONY: start_elasticsearch
+start_elasticsearch:
+
+.PHONY: gotest
+gotest: check_env
+	@echo "===> Starting elasticsearch"
+	@docker rm -f elasticsearch || true
+	@docker run --init -d --name elasticsearch -p 9200:9200 malice/elasticsearch:6.3; sleep 10
+	@echo "===> ${NAME} gotest"
+	@MALICE_ELASTICSEARCH=localhost go run *.go -V --api ${MALICE_VT_API} lookup 669f87f2ec48dce3a76386eec94d7e3b
+
 .PHONY: test
 test: check_env
 	@echo "===> ${NAME} --help"
@@ -79,7 +90,7 @@ ci-size: ci-build
 clean:
 	docker-clean stop
 	docker rmi $(ORG)/$(NAME):$(VERSION)
-	docker rmi $(ORG)/$(NAME):base
+
 
 # Absolutely awesome: http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 help:
