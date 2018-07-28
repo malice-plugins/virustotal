@@ -1,0 +1,6 @@
+{
+  "query_string": {
+    "query":
+      "_source.plugins.intel.virustotal.resource:669f87f2ec48dce3a76386eec94d7e3b"
+  }
+}

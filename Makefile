@@ -4,6 +4,9 @@ NAME=virustotal
 CATEGORY=intel
 VERSION=$(shell cat VERSION)
 
+FOUND_HASH=669f87f2ec48dce3a76386eec94d7e3b
+MISSING_HASH=669f87f2ec48dce3a76386eec94d7ecc
+
 
 all: build size tag test test_markdown
 
@@ -50,31 +53,31 @@ endif
 .PHONY: gotest
 gotest: check_env start_elasticsearch
 	@echo "===> ${NAME} gotest"
-	@MALICE_ELASTICSEARCH=localhost go run *.go -V --api ${MALICE_VT_API} lookup 669f87f2ec48dce3a76386eec94d7e3b
+	@MALICE_ELASTICSEARCH=localhost go run *.go -V --api ${MALICE_VT_API} lookup $(FOUND_HASH)
 
 .PHONY: test
 test: check_env
 	@echo "===> ${NAME} --help"
 	@docker run --rm $(ORG)/$(NAME):$(VERSION)
 	@echo "===> Test lookup found"
-	@docker run --rm $(ORG)/$(NAME):$(VERSION) -V --api ${MALICE_VT_API} lookup 669f87f2ec48dce3a76386eec94d7e3b | jq . > docs/results.json
+	@docker run --rm $(ORG)/$(NAME):$(VERSION) -V --api ${MALICE_VT_API} lookup $(FOUND_HASH) | jq . > docs/results.json
 	cat docs/results.json | jq .
 	@echo "===> Test lookup NOT found"
-	@docker run --rm $(ORG)/$(NAME):$(VERSION) -V --api ${MALICE_VT_API} lookup 669f87f2ec48dce3a76386eec94d7ecc | jq . > docs/no_results.json
+	@docker run --rm $(ORG)/$(NAME):$(VERSION) -V --api ${MALICE_VT_API} lookup $(MISSING_HASH) | jq . > docs/no_results.json
 	cat docs/no_results.json | jq .
 
 .PHONY: test_elastic
 test_elastic: start_elasticsearch
 	@echo "===> ${NAME} test_elastic found"
-	docker run --rm --link elasticsearch -e MALICE_ELASTICSEARCH=elasticsearch $(ORG)/$(NAME):$(VERSION) -V --api ${MALICE_VT_API} lookup 669f87f2ec48dce3a76386eec94d7e3b
+	docker run --rm --link elasticsearch -e MALICE_ELASTICSEARCH=elasticsearch $(ORG)/$(NAME):$(VERSION) -V --api ${MALICE_VT_API} lookup $(FOUND_HASH)
 	@echo "===> ${NAME} test_elastic NOT found"
-	docker run --rm --link elasticsearch -e MALICE_ELASTICSEARCH=elasticsearch $(ORG)/$(NAME):$(VERSION) -V --api ${MALICE_VT_API} lookup 669f87f2ec48dce3a76386eec94d7ecc
+	docker run --rm --link elasticsearch -e MALICE_ELASTICSEARCH=elasticsearch $(ORG)/$(NAME):$(VERSION) -V --api ${MALICE_VT_API} lookup $(MISSING_HASH)
 	http localhost:9200/malice/_search | jq . > docs/elastic.json
 
 .PHONY: test_markdown
 test_markdown: test_elastic
-	@echo "===> ${NAME} test_elastic"
-	http localhost:9200/malice/_search | jq . > docs/elastic.json
+	@echo "===> ${NAME} test_markdown"
+	# http localhost:9200/malice/_search query:=@docs/query.json | jq . > docs/elastic.json
 	cat docs/elastic.json | jq -r '.hits.hits[] ._source.plugins.${CATEGORY}.${NAME}.markdown' > docs/SAMPLE.md
 
 .PHONY: circle
