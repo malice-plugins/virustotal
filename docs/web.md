@@ -1,7 +1,7 @@
 # Create a File Info scan micro-service :new: :construction:
 
 ```bash
-$ docker run -d -p 3993:3993 malice/virustotal web
+$ docker run -d -p 3993:3993 malice/virustotal web --callback https://malice.io
 
 INFO[0000] web service listening on port :3993
 ```
@@ -119,3 +119,7 @@ Date: Sat, 21 Jan 2017 05:39:29 GMT
   "md5": "669f87f2ec48dce3a76386eec94d7e3b"
 }
 ```
+
+## `callback`
+
+If you supply a callback URL the JSON will also be sent to your BIG database backend for "caching" :sunglasses:
