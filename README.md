@@ -1,4 +1,4 @@
-![VT logo](https://raw.githubusercontent.com/maliceio/malice-virustotal/master/logo.png)
+![VT logo](https://raw.githubusercontent.com/malice-plugins/virustotal/master/logo.png)
 
 # malice-virustotal
 
@@ -53,7 +53,7 @@ Run 'virustotal COMMAND --help' for more information on a command.
 
 ## Sample Output
 
-### JSON:
+### [JSON](https://github.com/malice-plugins/virustotal/blob/master/docs/results.json)
 
 ```json
 {
@@ -154,7 +154,7 @@ Run 'virustotal COMMAND --help' for more information on a command.
 }
 ```
 
-### Markdown:
+### [Markdown](https://github.com/malice-plugins/virustotal/blob/master/docs/SAMPLE.md)
 
 ---
 
@@ -181,17 +181,17 @@ $ docker run --rm --link elasticsearch malice/virustotal HASH
 
 ### Issues
 
-Find a bug? Want more features? Find something missing in the documentation? Let me know! Please don't hesitate to [file an issue](https://github.com/maliceio/malice-virustotal/issues/new) and I'll get right on it.
+Find a bug? Want more features? Find something missing in the documentation? Let me know! Please don't hesitate to [file an issue](https://github.com/malice-plugins/virustotal/issues/new) and I'll get right on it.
 
 ### CHANGELOG
 
-See [`CHANGELOG.md`](https://github.com/maliceio/malice-virustotal/blob/master/CHANGELOG.md)
+See [`CHANGELOG.md`](https://github.com/malice-plugins/virustotal/blob/master/CHANGELOG.md)
 
 ### Contributing
 
-[See all contributors on GitHub](https://github.com/maliceio/malice-virustotal/graphs/contributors).
+[See all contributors on GitHub](https://github.com/malice-plugins/virustotal/graphs/contributors).
 
-Please update the [CHANGELOG.md](https://github.com/maliceio/malice-virustotal/blob/master/CHANGELOG.md) and submit a [Pull Request on GitHub](https://help.github.com/articles/using-pull-requests/).
+Please update the [CHANGELOG.md](https://github.com/malice-plugins/virustotal/blob/master/CHANGELOG.md) and submit a [Pull Request on GitHub](https://help.github.com/articles/using-pull-requests/).
 
 ### License
 
