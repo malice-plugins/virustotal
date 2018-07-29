@@ -168,6 +168,10 @@ Run 'virustotal COMMAND --help' for more information on a command.
 - [To create a File Info micro-service](https://github.com/malice-plugins/virustotal/blob/master/docs/web.md)
 - [To post results to a webhook](https://github.com/malice-plugins/virustotal/blob/master/docs/callback.md)
 
+## TODO
+
+- [ ] create `web` subcommand (with POST to URL callback)
+
 ### Issues
 
 Find a bug? Want more features? Find something missing in the documentation? Let me know! Please don't hesitate to [file an issue](https://github.com/malice-plugins/virustotal/issues/new) and I'll get right on it.
