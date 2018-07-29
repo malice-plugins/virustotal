@@ -10,7 +10,7 @@ INFO[0000] web service listening on port :3993
 
 You can share access to your Private API key without sharing your **PRIVATE** API key :wink:
 
-## Now you can perform scans like so
+## Now you can perform lookups like so
 
 ```bash
 $ http -f localhost:3993/lookup hash@befb88b89c2eb401900a68e9f5b78764203f2b48264fcc3f7121bf04a57fd408
