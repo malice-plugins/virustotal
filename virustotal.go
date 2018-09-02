@@ -19,15 +19,18 @@ import (
 	"gopkg.in/urfave/cli.v1"
 )
 
-// Version stores the plugin's version
-var Version string
-
-// BuildTime stores the plugin's build time
-var BuildTime string
-
 const (
 	name     = "virustotal"
 	category = "intel"
+)
+
+var (
+	// Version stores the plugin's version
+	Version string
+	// BuildTime stores the plugin's build time
+	BuildTime string
+	// es is the elasticsearch database object
+	es elasticsearch.Database
 )
 
 // VirusTotal is a type
@@ -258,8 +261,6 @@ func main() {
 
 	var apikey string
 
-	es := elasticsearch.Database{Index: "malice", Type: "samples"}
-
 	cli.AppHelpTemplate = utils.AppHelpTemplate
 	app := cli.NewApp()
 
@@ -331,11 +332,11 @@ func main() {
 					Usage: "output as Markdown table",
 				},
 				cli.StringFlag{
-					Name:        "elasitcsearch",
+					Name:        "elasticsearch",
 					Value:       "",
-					Usage:       "elasitcsearch address for Malice to store results",
-					EnvVar:      "MALICE_ELASTICSEARCH",
-					Destination: &es.Host,
+					Usage:       "elasticsearch url for Malice to store results",
+					EnvVar:      "MALICE_ELASTICSEARCH_URL",
+					Destination: &es.URL,
 				},
 			},
 			Action: func(c *cli.Context) error {
