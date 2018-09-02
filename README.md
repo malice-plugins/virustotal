@@ -6,7 +6,9 @@
 
 Malice VirusTotal Plugin
 
-This repository contains a **Dockerfile** of the [VirusTotal](https://virustotal.com) malice plugin **malice/virustotal**.
+> This repository contains a **Dockerfile** of the [VirusTotal](https://virustotal.com) malice plugin **malice/virustotal**.
+
+---
 
 ## Dependencies
 
@@ -14,8 +16,8 @@ This repository contains a **Dockerfile** of the [VirusTotal](https://virustotal
 
 ## Installation
 
-1.  Install [Docker](https://www.docker.io/).
-2.  Download [trusted build](https://hub.docker.com/r/malice/virustotal/) from public [DockerHub](https://hub.docker.com): `docker pull malice/virustotal`
+1. Install [Docker](https://www.docker.io/).
+2. Download [trusted build](https://hub.docker.com/r/malice/virustotal/) from public [DockerHub](https://hub.docker.com): `docker pull malice/virustotal`
 
 ## Usage
 
