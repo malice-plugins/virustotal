@@ -2,7 +2,7 @@
 
 # malice-virustotal
 
-[![Circle CI](https://circleci.com/gh/malice-plugins/virustotal.png?style=shield)](https://circleci.com/gh/malice-plugins/virustotal) [![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org) [![Docker Stars](https://img.shields.io/docker/stars/malice/virustotal.svg)](https://hub.docker.com/r/malice/virustotal/) [![Docker Pulls](https://img.shields.io/docker/pulls/malice/virustotal.svg)](https://hub.docker.com/r/malice/virustotal/) [![Docker Image](https://img.shields.io/badge/docker%20image-35.7MB-blue.svg)](https://hub.docker.com/r/malice/virustotal/)
+[![Circle CI](https://circleci.com/gh/malice-plugins/virustotal.png?style=shield)](https://circleci.com/gh/malice-plugins/virustotal) [![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org) [![Docker Stars](https://img.shields.io/docker/stars/malice/virustotal.svg)](https://hub.docker.com/r/malice/virustotal/) [![Docker Pulls](https://img.shields.io/docker/pulls/malice/virustotal.svg)](https://hub.docker.com/r/malice/virustotal/) [![Docker Image](https://img.shields.io/badge/docker%20image-36.6MB-blue.svg)](https://hub.docker.com/r/malice/virustotal/)
 
 Malice VirusTotal Plugin
 
@@ -37,7 +37,7 @@ Options:
   --proxy, -x		proxy settings for Malice webhook endpoint [$MALICE_PROXY]
   --table, -t		output as Markdown table
   --api value		VirusTotal API key [$MALICE_VT_API]
-  --elasitcsearch value	elasitcsearch address for Malice to store results [$MALICE_ELASTICSEARCH]
+  --elasticsearch value	elasticsearch address for Malice to store results [$MALICE_ELASTICSEARCH]
   --help, -h		show help
   --version, -v		print the version
 

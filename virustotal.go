@@ -10,9 +10,9 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/levigross/grequests"
-	"github.com/malice-plugins/go-plugin-utils/database"
-	"github.com/malice-plugins/go-plugin-utils/database/elasticsearch"
-	"github.com/malice-plugins/go-plugin-utils/utils"
+	"github.com/malice-plugins/pkgs/database/elasticsearch"
+	"github.com/malice-plugins/pkgs/utils"
+	"github.com/malice-plugins/pkgs/database"
 	"github.com/mitchellh/mapstructure"
 	"github.com/parnurzeal/gorequest"
 	"github.com/pkg/errors"
@@ -335,15 +335,17 @@ func main() {
 					Name:        "elasticsearch",
 					Value:       "",
 					Usage:       "elasticsearch url for Malice to store results",
-					EnvVar:      "MALICE_ELASTICSEARCH_URL",
+					EnvVar:      "MALICE_ELASTICSEARCH_URL,MALICE_ELASTICSEARCH_HOST",
 					Destination: &es.URL,
 				},
 			},
 			Action: func(c *cli.Context) error {
+
 				// Check for valid apikey
 				if apikey == "" {
 					log.Fatal(fmt.Errorf("please supply a valid MALICE_VT_API key with the flag '--api'"))
 				}
+
 				if c.GlobalBool("verbose") {
 					log.SetLevel(log.DebugLevel)
 				}
@@ -354,10 +356,10 @@ func main() {
 					vtReport["markdown"] = generateMarkDownTable(vtReport)
 
 					// upsert into Database
-					if len(c.String("elasitcsearch")) > 0 {
+					if len(c.String("elasticsearch")) > 0 {
 						err := es.Init()
 						if err != nil {
-							return errors.Wrap(err, "failed to initalize elasitcsearch")
+							return errors.Wrap(err, "failed to initalize elasticsearch")
 						}
 						err = es.StorePluginResults(database.PluginResults{
 							ID:       utils.Getopt("MALICE_SCANID", hash),

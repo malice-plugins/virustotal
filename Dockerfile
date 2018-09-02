@@ -24,7 +24,7 @@ RUN apk --update add --no-cache -t .build-deps build-base \
   && export GOPATH=/go \
   && go version \
   && dep ensure \
-  && go build -ldflags "-X main.Version=$(cat VERSION) -X main.BuildTime=$(date -u +%Y%m%d)" -o /bin/virustotal \
+  && go build -ldflags "-X main.Version=v$(cat VERSION) -X main.BuildTime=$(date -u +%Y%m%d)" -o /bin/virustotal \
   && rm -rf /go /usr/local/go /usr/lib/go /tmp/* /var/cache/apk/* /root/go \
   && apk del --purge .build-deps
 
