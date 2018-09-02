@@ -185,7 +185,7 @@ OPTIONS:
 
 ## TODO
 
-- [ ] create `web` subcommand (with POST to URL callback)
+- [ ] create `web` subcommand (with POST to URL callback) allows sharing of API
 
 ## Issues
 
