@@ -10,7 +10,7 @@ $ docker run -d --name elasticsearch \
                  blacktop/elasticsearch:6
 $ docker run --rm --link elasticsearch \
              -e MALICE_ELASTICSEARCH_URL=http://elasticsearch:9200 \
-             malice/virustotal -t HASH
+             malice/virustotal lookup -t HASH
 ```
 
 ## Write to an external `elasticsearch` database
@@ -21,5 +21,5 @@ $ docker run --rm \
              -e MALICE_ELASTICSEARCH_USERNAME=$MALICE_ELASTICSEARCH_USERNAME \
              -e MALICE_ELASTICSEARCH_PASSWORD=$MALICE_ELASTICSEARCH_PASSWORD \
              -e MALICE_ELASTICSEARCH_INDEX="test" \
-              malice/virustotal -t HASH
+              malice/virustotal lookup -t HASH
 ```

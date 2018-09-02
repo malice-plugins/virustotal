@@ -8,45 +8,59 @@ Malice VirusTotal Plugin
 
 This repository contains a **Dockerfile** of the [VirusTotal](https://virustotal.com) malice plugin **malice/virustotal**.
 
-### Dependencies
+## Dependencies
 
 - [malice/alpine](https://hub.docker.com/r/malice/alpine/)
 
-### Installation
+## Installation
 
 1.  Install [Docker](https://www.docker.io/).
 2.  Download [trusted build](https://hub.docker.com/r/malice/virustotal/) from public [DockerHub](https://hub.docker.com): `docker pull malice/virustotal`
 
-### Usage
+## Usage
 
 ```bash
-$ docker run --rm malice/virustotal --api APIKEY lookup HASH
+$ docker run --rm malice/virustotal --help
 
 Usage: virustotal [OPTIONS] COMMAND [arg...]
 
 Malice VirusTotal Plugin
 
-Version: v0.1.0, BuildTime: 20160214
+Version: v0.1.0, BuildTime: 20180902
 
 Author:
   blacktop - <https://github.com/blacktop>
 
 Options:
-  --verbose, -V		verbose output
-  --post, -p		POST results to Malice webhook [$MALICE_ENDPOINT]
-  --proxy, -x		proxy settings for Malice webhook endpoint [$MALICE_PROXY]
-  --table, -t		output as Markdown table
-  --api value		VirusTotal API key [$MALICE_VT_API]
-  --elasticsearch value	elasticsearch address for Malice to store results [$MALICE_ELASTICSEARCH]
-  --help, -h		show help
-  --version, -v		print the version
+  --verbose, -V  verbose output
+  --api value    VirusTotal API key [$MALICE_VT_API]
+  --help, -h     show help
+  --version, -v  print the version
 
 Commands:
-  scan		Upload binary to VirusTotal for scanning
-  lookup	Get file hash scan report
-  help		Shows a list of commands or help for one command
+  scan    Upload binary to VirusTotal for scanning
+  lookup  Get file hash scan report
+  help    Shows a list of commands or help for one command
 
 Run 'virustotal COMMAND --help' for more information on a command.
+```
+
+### Lookup
+
+```bash
+$ docker run --rm malice/virustotal --api APIKEY lookup --help
+
+NAME:
+   virustotal lookup - Get file hash scan report
+
+USAGE:
+   virustotal lookup [command options] MD5/SHA1/SHA256 hash of file
+
+OPTIONS:
+   --post, -p             POST results to Malice webhook [$MALICE_ENDPOINT]
+   --proxy, -x            proxy settings for Malice webhook endpoint [$MALICE_PROXY]
+   --table, -t            output as Markdown table
+   --elasticsearch value  elasticsearch url for Malice to storeresults [$MALICE_ELASTICSEARCH_URL]
 ```
 
 ## Sample Output
@@ -172,20 +186,20 @@ Run 'virustotal COMMAND --help' for more information on a command.
 
 - [ ] create `web` subcommand (with POST to URL callback)
 
-### Issues
+## Issues
 
 Find a bug? Want more features? Find something missing in the documentation? Let me know! Please don't hesitate to [file an issue](https://github.com/malice-plugins/virustotal/issues/new) and I'll get right on it.
 
-### CHANGELOG
+## CHANGELOG
 
 See [`CHANGELOG.md`](https://github.com/malice-plugins/virustotal/blob/master/CHANGELOG.md)
 
-### Contributing
+## Contributing
 
 [See all contributors on GitHub](https://github.com/malice-plugins/virustotal/graphs/contributors).
 
 Please update the [CHANGELOG.md](https://github.com/malice-plugins/virustotal/blob/master/CHANGELOG.md) and submit a [Pull Request on GitHub](https://help.github.com/articles/using-pull-requests/).
 
-### License
+## License
 
 MIT Copyright (c) 2015 **blacktop**

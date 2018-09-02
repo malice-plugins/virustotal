@@ -10,9 +10,9 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/levigross/grequests"
+	"github.com/malice-plugins/pkgs/database"
 	"github.com/malice-plugins/pkgs/database/elasticsearch"
 	"github.com/malice-plugins/pkgs/utils"
-	"github.com/malice-plugins/pkgs/database"
 	"github.com/mitchellh/mapstructure"
 	"github.com/parnurzeal/gorequest"
 	"github.com/pkg/errors"
@@ -335,7 +335,7 @@ func main() {
 					Name:        "elasticsearch",
 					Value:       "",
 					Usage:       "elasticsearch url for Malice to store results",
-					EnvVar:      "MALICE_ELASTICSEARCH_URL,MALICE_ELASTICSEARCH_HOST",
+					EnvVar:      "MALICE_ELASTICSEARCH_URL",
 					Destination: &es.URL,
 				},
 			},
