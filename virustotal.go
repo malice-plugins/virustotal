@@ -29,6 +29,7 @@ var (
 	Version string
 	// BuildTime stores the plugin's build time
 	BuildTime string
+	hash      string
 	// es is the elasticsearch database object
 	es elasticsearch.Database
 )
@@ -99,6 +100,16 @@ type bitlyData struct {
 	NewHash    int    `json:"new_hash"`
 	Hash       string `json:"hash"`
 	GlobalHash string `json:"global_hash"`
+}
+
+func assert(err error) {
+	if err != nil {
+		log.WithFields(log.Fields{
+			"plugin":   name,
+			"category": category,
+			"hash":     hash,
+		}).Fatal(err)
+	}
 }
 
 // scanFile uploads file to virustotal
@@ -190,10 +201,10 @@ func lookupHash(hash string, apikey string) map[string]interface{} {
 
 	// var vtResult ResultsData
 	// err = mapstructure.Decode(results.Data, &vtResult)
-	// utils.Assert(err)
+	// assert(err)
 
 	// vtJSON, err := json.Marshal(vtResult)
-	// utils.Assert(err)
+	// assert(err)
 	// // write to stdout
 	// fmt.Println(string(vtJSON))
 
@@ -238,7 +249,7 @@ func generateMarkDownTable(virustotal map[string]interface{}) string {
 	var vt ResultsData
 
 	err := mapstructure.Decode(virustotal, &vt)
-	utils.Assert(err)
+	assert(err)
 
 	// calculate ratio
 	vt.Ratio = getRatio(vt.Positives, vt.Total)
@@ -301,7 +312,7 @@ func main() {
 					path := c.Args().First()
 					// Check that file exists
 					if _, err := os.Stat(path); os.IsNotExist(err) {
-						utils.Assert(err)
+						assert(err)
 					}
 					// upload file to virustotal.com
 					scanFile(path, apikey)
@@ -376,7 +387,7 @@ func main() {
 						fmt.Println(vtReport["markdown"])
 					} else {
 						vtJSON, err := json.Marshal(vtReport)
-						utils.Assert(err)
+						assert(err)
 
 						if c.Bool("post") {
 							request := gorequest.New()
@@ -402,5 +413,5 @@ func main() {
 	}
 
 	err := app.Run(os.Args)
-	utils.Assert(err)
+	assert(err)
 }
