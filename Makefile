@@ -71,9 +71,9 @@ test: check_env
 .PHONY: test_elastic
 test_elastic: start_elasticsearch
 	@echo "===> ${NAME} test_elastic found"
-	docker run --rm --link elasticsearch -e MALICE_ELASTICSEARCH_URL=elasticsearch:9200 $(ORG)/$(NAME):$(VERSION) -V --api ${MALICE_VT_API} lookup $(FOUND_HASH)
+	docker run --rm --link elasticsearch -e MALICE_ELASTICSEARCH_URL=http://elasticsearch:9200 $(ORG)/$(NAME):$(VERSION) -V --api ${MALICE_VT_API} lookup $(FOUND_HASH)
 	@echo "===> ${NAME} test_elastic NOT found"
-	docker run --rm --link elasticsearch -e MALICE_ELASTICSEARCH_URL=elasticsearch:9200 $(ORG)/$(NAME):$(VERSION) -V --api ${MALICE_VT_API} lookup $(MISSING_HASH)
+	docker run --rm --link elasticsearch -e MALICE_ELASTICSEARCH_URL=http://elasticsearch:9200 $(ORG)/$(NAME):$(VERSION) -V --api ${MALICE_VT_API} lookup $(MISSING_HASH)
 	http localhost:9200/malice/_search | jq . > docs/elastic.json
 
 .PHONY: test_markdown
