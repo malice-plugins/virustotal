@@ -28,7 +28,7 @@ Usage: virustotal [OPTIONS] COMMAND [arg...]
 
 Malice VirusTotal Plugin
 
-Version: v0.1.0, BuildTime: 20180902
+Version: v0.1.1, BuildTime: 20190211
 
 Author:
   blacktop - <https://github.com/blacktop>
@@ -42,6 +42,7 @@ Options:
 Commands:
   scan    Upload binary to VirusTotal for scanning
   lookup  Get file hash scan report
+  web     Create a VirusTotal scan web service
   help    Shows a list of commands or help for one command
 
 Run 'virustotal COMMAND --help' for more information on a command.
@@ -181,11 +182,12 @@ OPTIONS:
 ## Documentation
 
 - [To write results to ElasticSearch](https://github.com/malice-plugins/virustotal/blob/master/docs/elasticsearch.md)
+- [To create a eScan scan micro-service](https://github.com/malice-plugins/virustotal/blob/master/docs/web.md)
 - [To post results to a webhook](https://github.com/malice-plugins/virustotal/blob/master/docs/callback.md)
 
 ## TODO
 
-- [ ] create `web` subcommand (with POST to URL callback) allows sharing of API
+- [x] create `web` subcommand (with POST to URL callback) allows sharing of API
 
 ## Issues
 

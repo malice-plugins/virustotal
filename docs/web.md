@@ -1,7 +1,7 @@
 # Create a File Info scan micro-service :new: :construction:
 
 ```bash
-$ docker run -d -p 3993:3993 malice/virustotal web --callback https://malice.io
+$ docker run -d -p 3993:3993 malice/virustotal --api <API_KEY> web
 
 INFO[0000] web service listening on port :3993
 ```
@@ -13,7 +13,13 @@ You can share access to your Private API key without sharing your **PRIVATE** AP
 ## Now you can perform lookups like so
 
 ```bash
-$ http -f localhost:3993/lookup hash@befb88b89c2eb401900a68e9f5b78764203f2b48264fcc3f7121bf04a57fd408
+$ http -f localhost:3993/lookup/befb88b89c2eb401900a68e9f5b78764203f2b48264fcc3f7121bf04a57fd408
+```
+
+## Or scans like so
+
+```bash
+$ http -f localhost:3993/scan malware@/path/to/malware
 ```
 
 > **NOTE:** I am using **httpie** to POST to the malice micro-service
