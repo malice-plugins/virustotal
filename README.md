@@ -182,7 +182,7 @@ OPTIONS:
 ## Documentation
 
 - [To write results to ElasticSearch](https://github.com/malice-plugins/virustotal/blob/master/docs/elasticsearch.md)
-- [To create a eScan scan micro-service](https://github.com/malice-plugins/virustotal/blob/master/docs/web.md)
+- [To create a VirusTotal scan / lookup micro-service](https://github.com/malice-plugins/virustotal/blob/master/docs/web.md)
 - [To post results to a webhook](https://github.com/malice-plugins/virustotal/blob/master/docs/callback.md)
 
 ## TODO

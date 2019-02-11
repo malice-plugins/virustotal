@@ -1,4 +1,4 @@
-# Create a File Info scan micro-service :new: :construction:
+# Create a VirusTotal scan / lookup micro-service
 
 ```bash
 $ docker run -d -p 3993:3993 malice/virustotal --api <API_KEY> web
