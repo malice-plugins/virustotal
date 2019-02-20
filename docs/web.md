@@ -126,9 +126,26 @@ Date: Sat, 21 Jan 2017 05:39:29 GMT
 $ http -f localhost:3993/scan malware@/path/to/malware
 ```
 
-Scans return either the following result or, if the file was already submitted previously, the scan result shown above.
+Scan can return different results. If the scan has not been done previously, you'll get a status report similar to the ones shown below. If the scan has been completed, you'll receive the report as shown above.
 
 ```
+{
+    "resource": "1e13f280433497a381731e65dcad89e1b1ccc156e6cc79c5fd72b7cf014cfb5d",
+    "response_code": 0,
+    "verbose_msg": "The requested resource is not among the finished, queued or pending scans"
+}
+
+OR
+
+{
+    "resource": "1e13f280433497a381731e65dcad89e1b1ccc156e6cc79c5fd72b7cf014cfb5d",
+    "response_code": -2,
+    "scan_id": "1e13f280433497a381731e65dcad89e1b1ccc156e6cc79c5fd72b7cf014cfb5d",
+    "verbose_msg": "Your resource is queued for analysis"
+}
+
+OR
+
 {
   'permalink': 'https://www.virustotal.com/file/d140c...244ef892e5/analysis/1359112395/',
   'resource': u'd140c244ef892e59c7f68bd0c6f74bb711032563e2a12fa9dda5b760daecd556',
