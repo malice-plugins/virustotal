@@ -20,7 +20,7 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"github.com/parnurzeal/gorequest"
 	"github.com/pkg/errors"
-	"gopkg.in/urfave/cli.v1"
+	"github.com/urfave/cli"
 )
 
 const (
@@ -338,9 +338,9 @@ func webAvLookup(w http.ResponseWriter, r *http.Request) {
 
 	hashType, _ := utils.GetHashType(hash)
 
-	if !strings.EqualFold(hashType, "sha1") {
+	if !strings.EqualFold(hashType, "md5") || !strings.EqualFold(hashType, "sha1") || !strings.EqualFold(hashType, "sha256") {
 		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintln(w, "please supply a proper MD5/SHA1 hash to query")
+		fmt.Fprintln(w, "please supply a proper MD5//SHA256 hash to query")
 		return
 	}
 
