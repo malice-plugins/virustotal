@@ -16,12 +16,6 @@ You can share access to your Private API key without sharing your **PRIVATE** AP
 $ http -f localhost:3993/lookup/befb88b89c2eb401900a68e9f5b78764203f2b48264fcc3f7121bf04a57fd408
 ```
 
-## Or scans like so
-
-```bash
-$ http -f localhost:3993/scan malware@/path/to/malware
-```
-
 > **NOTE:** I am using **httpie** to POST to the malice micro-service
 
 ```bash
@@ -123,6 +117,25 @@ Date: Sat, 21 Jan 2017 05:39:29 GMT
   "positives": 46,
   "sha256": "befb88b89c2eb401900a68e9f5b78764203f2b48264fcc3f7121bf04a57fd408",
   "md5": "669f87f2ec48dce3a76386eec94d7e3b"
+}
+```
+
+## Or scans like so
+
+```bash
+$ http -f localhost:3993/scan malware@/path/to/malware
+```
+
+Scans return either the following result or, if the file was already submitted previously, the scan result shown above.
+
+```
+{
+  'permalink': 'https://www.virustotal.com/file/d140c...244ef892e5/analysis/1359112395/',
+  'resource': u'd140c244ef892e59c7f68bd0c6f74bb711032563e2a12fa9dda5b760daecd556',
+  'response_code': 1,
+  'scan_id': 'd140c244ef892e59c7f68bd0c6f74bb711032563e2a12fa9dda5b760daecd556-1359112395',
+  'verbose_msg': 'Scan request successfully queued, come back later for the report',
+  'sha256': 'd140c244ef892e59c7f68bd0c6f74bb711032563e2a12fa9dda5b760daecd556'
 }
 ```
 
