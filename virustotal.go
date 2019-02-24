@@ -5,10 +5,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
+	"io/ioutil"
+	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/gorilla/mux"
 	"github.com/levigross/grequests"
 	"github.com/malice-plugins/pkgs/database"
 	"github.com/malice-plugins/pkgs/database/elasticsearch"
@@ -16,7 +20,7 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"github.com/parnurzeal/gorequest"
 	"github.com/pkg/errors"
-	"gopkg.in/urfave/cli.v1"
+	"github.com/urfave/cli"
 )
 
 const (
@@ -102,6 +106,8 @@ type bitlyData struct {
 	GlobalHash string `json:"global_hash"`
 }
 
+var apikey string
+
 func assert(err error) {
 	if err != nil {
 		log.WithFields(log.Fields{
@@ -113,7 +119,7 @@ func assert(err error) {
 }
 
 // scanFile uploads file to virustotal
-func scanFile(path string, apikey string) string {
+func scanFile(path string, apikey string) map[string]interface{} {
 	// fmt.Println("Uploading file to virustotal...")
 	fd, err := grequests.FileUploadFromDisk(path)
 
@@ -166,7 +172,9 @@ func scanFile(path string, apikey string) string {
 	}
 
 	// fmt.Println(resp.String())
-	return resp.String()
+	var results map[string]interface{}
+	resp.JSON(&results)
+	return results
 }
 
 // lookupHash retreieves the virustotal file report for the given hash
@@ -268,10 +276,86 @@ func printStatus(resp gorequest.Response, body string, errs []error) {
 	fmt.Println(body)
 }
 
+func webService() {
+	router := mux.NewRouter().StrictSlash(true)
+	router.HandleFunc("/scan", webAvScan).Methods("POST")
+	router.HandleFunc("/lookup/{hash}", webAvLookup)
+	log.WithFields(log.Fields{
+		"plugin":   name,
+		"category": category,
+	}).Info("web service listening on port :3993")
+	log.Fatal(http.ListenAndServe(":3993", router))
+}
+
+func webAvScan(w http.ResponseWriter, r *http.Request) {
+	r.ParseMultipartForm(32 << 20)
+	file, header, err := r.FormFile("malware")
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintln(w, "Please supply a valid file to scan.")
+		log.WithFields(log.Fields{
+			"plugin":   name,
+			"category": category,
+		}).Error(err)
+	}
+	defer file.Close()
+
+	log.WithFields(log.Fields{
+		"plugin":   name,
+		"category": category,
+	}).Debug("Uploaded fileName: ", header.Filename)
+
+	tmpfile, err := ioutil.TempFile("/malware", "web_")
+	assert(err)
+	defer os.Remove(tmpfile.Name()) // clean up
+
+	data, err := ioutil.ReadAll(file)
+	assert(err)
+
+	if _, err = tmpfile.Write(data); err != nil {
+		assert(err)
+	}
+	if err = tmpfile.Close(); err != nil {
+		assert(err)
+	}
+
+	// Do AV scan
+	path := tmpfile.Name()
+	virustotal := scanFile(path, apikey)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+
+	if err := json.NewEncoder(w).Encode(virustotal); err != nil {
+		assert(err)
+	}
+}
+
+func webAvLookup(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	hash = vars["hash"]
+
+	hashType, _ := utils.GetHashType(hash)
+
+	if !strings.EqualFold(hashType, "md5") && !strings.EqualFold(hashType, "sha1") && !strings.EqualFold(hashType, "sha256") {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintln(w, "please supply a proper MD5/SHA1/SHA256 hash to query")
+		return
+	}
+
+	// Do AV scan
+	virustotal := lookupHash(hash, apikey)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+
+	if err := json.NewEncoder(w).Encode(virustotal); err != nil {
+		assert(err)
+	}
+}
+
 func main() {
-
-	var apikey string
-
 	cli.AppHelpTemplate = utils.AppHelpTemplate
 	app := cli.NewApp()
 
@@ -407,6 +491,18 @@ func main() {
 				} else {
 					log.Fatal(fmt.Errorf("please supply a MD5/SHA1/SHA256 hash to query"))
 				}
+				return nil
+			},
+		},
+		{
+			Name:  "web",
+			Usage: "Create a VirusTotal scan web service",
+			Action: func(c *cli.Context) error {
+				// Check for valid apikey
+				if apikey == "" {
+					log.Fatal(fmt.Errorf("please supply a valid MALICE_VT_API key with the flag '--api'"))
+				}
+				webService()
 				return nil
 			},
 		},
